@@ -2,85 +2,69 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>BDR Participant</title>
-  <link rel="stylesheet" href="/css/participant.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BDR Accueil</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --card: #141b34;
+      --text: #e8edff;
+      --muted: #b8c1e8;
+      --participant: #5f8cff;
+      --admin: #00a57a;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: radial-gradient(circle at top, #1b2550 0%, var(--bg) 55%);
+      color: var(--text);
+      padding: 20px;
+    }
+
+    .card {
+      width: min(560px, 100%);
+      background: var(--card);
+      border: 1px solid #27305a;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, .35);
+    }
+
+    h1 { margin: 0 0 10px; font-size: 1.8rem; }
+    p { margin: 0 0 22px; color: var(--muted); }
+
+    .actions { display: grid; gap: 12px; }
+
+    .btn {
+      display: block;
+      text-decoration: none;
+      color: white;
+      font-weight: 600;
+      text-align: center;
+      padding: 12px 14px;
+      border-radius: 10px;
+      transition: transform .1s ease, opacity .2s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); opacity: .95; }
+    .btn.participant { background: var(--participant); }
+    .btn.admin { background: var(--admin); }
+  </style>
 </head>
 <body>
-  <div id="chronoBadge">⏱ 00:00:00</div>
-  <div id="saveBadge">👍</div>
-  <button id="closeSessionBtn">Fermer</button>
+  <main class="card">
+    <h1>BDR Collecteur</h1>
+    <p>Choisissez votre entrée (non sécurisée) :</p>
 
-  <section id="start" class="screen active">
-    <div class="card">
-      <h1>Mon Tissage Résonances</h1>
-      <p>Choisissez les mots qui résonnent. Placez-les et tissez ce que ça vous fait.</p>
-
-      <input id="participantCode" placeholder="Code participant ex. P001" />
-      <input id="sessionCode" placeholder="Code session ex. G01" />
-
-      <button id="startBtn">Commencer</button>
-      <button id="resumeBtn" class="secondary">Reprendre la session</button>
-      <p class="note">Données locales puis transfert vers l’animateur.</p>
+    <div class="actions">
+      <a class="btn participant" href="/participant.html">Entrée participant</a>
+      <a class="btn admin" href="/admin.html">Entrée admin</a>
     </div>
-  </section>
-
-  <section id="app" class="app">
-    <header>
-      <h1>Mon Tissage Résonances</h1>
-      <div class="question">Ça me fait quoi, ici et maintenant ?</div>
-
-      <div id="familyTabs" class="family-tabs"></div>
-      <div id="chips" class="chips"></div>
-    </header>
-
-    <main id="zone" class="zone">
-      <canvas id="canvas"></canvas>
-      <div class="center"></div>
-    </main>
-
-    <footer>
-  <div class="footer-row">
-    <input id="noteInput" placeholder="Écrire une note..." />
-    <button class="noteBtn" id="noteBtn">📝</button>
-  </div>
-</footer>
-  </section>
-
-  <section id="comment" class="screen">
-    <div class="card">
-      <h2>Ça me fait quoi, ici et maintenant ?</h2>
-      <p>Ça me fait quoi, ici et maintenant ?, qu’est-ce que ça me fait ?</p>
-      <textarea id="commentInput" placeholder="Ça me fait quoi, ici et maintenant ?… pas besoin d’expliquer."></textarea>
-      <button id="saveCommentBtn">Voir ma synthèse</button>
-    </div>
-  </section>
-
-  <section id="summary" class="summary"></section>
-
-  <script src="/js/data.js"></script>
-  <script src="/js/state.js"></script>
-  <script src="/js/chrono.js"></script>
-  <script src="/js/compass.js"></script>
-  <script src="/js/export.js"></script>
-  <script src="/js/app.js"></script>
+  </main>
 </body>
 </html>
-<div id="tip" class="tip hidden"></div>
-
-
-<div id="helpBtn">💡</div>
-
-<div id="helpPanel" class="hidden">
-  <div class="help-card">
-    <h3>Comment utiliser</h3>
-    <p>
-      Touchez des mots.<br>
-      Déplacez-les.<br>
-      Ajoutez une note 📝.<br>
-      Quand c’est prêt → Révéler.
-    </p>
-    <button onclick="toggleHelp()">Fermer</button>
-  </div>
-</div>
-

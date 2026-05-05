@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>BDR Participant</title>
+  <link rel="stylesheet" href="/css/participant.css" />
+</head>
+<body>
+  <div id="chronoBadge">⏱ 00:00:00</div>
+  <div id="saveBadge">👍</div>
+  <button id="closeSessionBtn">Fermer</button>
+
+  <section id="start" class="screen active">
+    <div class="card">
+      <h1>Mon Tissage Résonances</h1>
+      <p>Choisissez les mots qui résonnent. Placez-les et tissez ce que ça vous fait.</p>
+
+      <input id="participantCode" placeholder="Code participant ex. P001" />
+      <input id="sessionCode" placeholder="Code session ex. G01" />
+
+      <button id="startBtn">Commencer</button>
+      <button id="resumeBtn" class="secondary">Reprendre la session</button>
+      <p class="note">Données locales puis transfert vers l’animateur.</p>
+    </div>
+  </section>
+
+  <section id="app" class="app">
+    <header>
+      <h1>Mon Tissage Résonances</h1>
+      <div class="question">Ça me fait quoi, ici et maintenant ?</div>
+
+      <div id="familyTabs" class="family-tabs"></div>
+      <div id="chips" class="chips"></div>
+    </header>
+
+    <main id="zone" class="zone">
+      <canvas id="canvas"></canvas>
+      <div class="center"></div>
+    </main>
+
+    <footer>
+  <div class="footer-row">
+    <input id="noteInput" placeholder="Écrire une note..." />
+    <button class="noteBtn" id="noteBtn">📝</button>
+  </div>
+</footer>
+  </section>
+
+  <section id="comment" class="screen">
+    <div class="card">
+      <h2>Ça me fait quoi, ici et maintenant ?</h2>
+      <p>Ça me fait quoi, ici et maintenant ?, qu’est-ce que ça me fait ?</p>
+      <textarea id="commentInput" placeholder="Ça me fait quoi, ici et maintenant ?… pas besoin d’expliquer."></textarea>
+      <button id="saveCommentBtn">Voir ma synthèse</button>
+    </div>
+  </section>
+
+  <section id="summary" class="summary"></section>
+
+  <script src="/js/data.js"></script>
+  <script src="/js/state.js"></script>
+  <script src="/js/chrono.js"></script>
+  <script src="/js/compass.js"></script>
+  <script src="/js/export.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
+<div id="tip" class="tip hidden"></div>
+
+
+<div id="helpBtn">💡</div>
+
+<div id="helpPanel" class="hidden">
+  <div class="help-card">
+    <h3>Comment utiliser</h3>
+    <p>
+      Touchez des mots.<br>
+      Déplacez-les.<br>
+      Ajoutez une note 📝.<br>
+      Quand c’est prêt → Révéler.
+    </p>
+    <button onclick="toggleHelp()">Fermer</button>
+  </div>
+</div>
+
