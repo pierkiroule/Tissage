@@ -2,11 +2,13 @@ const $ = id => document.getElementById(id)
 
 let openFamily = "corps"
 let showRaw = false
+let activeMainTab = "ecouter"
 
 function showScreen(id){
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"))
   $("app").classList.remove("active")
-  $("summary").classList.remove("active")
+  const summaryEl = $("summary")
+  if(summaryEl) summaryEl.classList.remove("active")
 
   if(id === "app") $("app").classList.add("active")
   else if(id === "summary") $("summary").classList.add("active")
@@ -21,18 +23,17 @@ function ensureSessionFields(){
 }
 
 function startSession(){
-  const participant = $("participantCode").value.trim()
-  const session = $("sessionCode").value.trim()
+  const pseudo = $("pseudoInput").value.trim()
 
-  if(!participant){
-    alert("Indiquez un code participant.")
+  if(!pseudo){
+    alert("Indiquez votre pseudo.")
     return
   }
 
-  window.BDR.session = createSession(participant, session)
+  window.BDR.session = createSession(pseudo, "local")
   ensureSessionFields()
   saveSession()
-  logEvent("session_start", { participantCode: participant, sessionCode: session })
+  logEvent("session_start", { pseudo })
   showApp()
 }
 
@@ -42,10 +43,64 @@ function showApp(){
 }
 
 function renderApp(){
+  renderMainTabs()
   renderFamilyTabs()
   renderChips()
   resizeCompass()
   renderBubbles()
+  renderInlineSummary()
+}
+
+function renderMainTabs(){
+  document.querySelectorAll(".main-tab").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.tab === activeMainTab)
+  })
+  document.querySelectorAll(".tab-panel").forEach(panel => {
+    panel.classList.toggle("active", panel.dataset.tabPanel === activeMainTab)
+  })
+}
+
+function switchMainTab(tab){
+  activeMainTab = tab
+  renderMainTabs()
+}
+
+async function scanQrFromFile(){
+  const input = $("qrFileInput")
+  const status = $("qrStatus")
+  if(!input || !input.files?.length) return
+  if(!("BarcodeDetector" in window)){
+    status.textContent = "Scanner non supporté ici. Collez l’URL manuellement."
+    return
+  }
+  const detector = new BarcodeDetector({ formats: ["qr_code"] })
+  const bitmap = await createImageBitmap(input.files[0])
+  const codes = await detector.detect(bitmap)
+  if(!codes.length || !codes[0].rawValue){
+    status.textContent = "QR non reconnu."
+    return
+  }
+  openScannedPage(codes[0].rawValue)
+  status.textContent = "QR détecté."
+}
+
+function openScannedPage(url){
+  const safe = (url || "").trim()
+  if(!/^https?:\/\//i.test(safe)){
+    alert("URL invalide. Utilisez une URL commençant par http:// ou https://")
+    return
+  }
+  const modal = $("qrModal")
+  const iframe = $("qrIframe")
+  iframe.src = safe
+  modal.classList.remove("hidden")
+}
+
+function closeQrModal(){
+  const modal = $("qrModal")
+  const iframe = $("qrIframe")
+  if(iframe) iframe.src = "about:blank"
+  if(modal) modal.classList.add("hidden")
 }
 
 function renderFamilyTabs(){
@@ -161,21 +216,8 @@ function addNote(){
 }
 
 function goToSummary(){
-  try{
-    if(!window.BDR || !window.BDR.session){
-      alert("Aucune session active.")
-      return
-    }
-
-    const ok = confirm("Révéler votre tissage ?")
-    if(!ok) return
-
-    logEvent("view_summary")
-    saveSession()
-    renderSummary()
-  }catch(e){
-    alert("Erreur synthèse : " + e.message)
-  }
+  switchMainTab("synthetiser")
+  renderInlineSummary()
 }
 
 function backToSession(){
@@ -194,9 +236,17 @@ function toggleRaw(){
 function bindUI(){
   $("startBtn").onclick = startSession
   $("noteBtn").onclick = addNote
+  $("scanQrBtn").onclick = () => $("qrFileInput").click()
+  $("qrFileInput").onchange = scanQrFromFile
+  $("openManualUrlBtn").onclick = () => openScannedPage($("manualUrlInput").value)
+  $("closeQrModalBtn").onclick = closeQrModal
+  $("qrModal").onclick = e => {
+    if(e.target.id === "qrModal") closeQrModal()
+  }
 
-  const closeBtn = $("closeSessionBtn")
-  if(closeBtn) closeBtn.onclick = goToSummary
+  document.querySelectorAll(".main-tab").forEach(btn => {
+    btn.onclick = () => switchMainTab(btn.dataset.tab)
+  })
 
   const input = $("noteInput")
   if(input){
@@ -226,86 +276,33 @@ document.addEventListener("DOMContentLoaded", () => {
   showScreen("start")
 })
 
-function showTip(text, duration=3000){
-  const el = document.getElementById("tip")
-  if(!el) return
-
-  el.textContent = text
-  el.classList.remove("hidden")
-
-  setTimeout(()=>{
-    el.classList.add("hidden")
-  }, duration)
-}
-
-function initTips(){
-  // au démarrage
-  setTimeout(()=> showTip("Touchez des mots"), 800)
-
-  // si aucune interaction
-  setTimeout(()=>{
-    if(window.BDR.session && window.BDR.session.events.length < 3){
-      showTip("Ajoutez une note 📝")
-    }
-  }, 6000)
-}
-
-document.addEventListener("DOMContentLoaded", ()=>{
-  initTips()
-})
-
-
-function toggleHelp(){
-  const panel = document.getElementById("helpPanel")
-  if(!panel) return
-
-  panel.classList.toggle("hidden")
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  const first = !localStorage.getItem("bdr_help_seen")
-
-  if(first){
-    const panel = document.getElementById("helpPanel")
-    if(panel){
-      panel.classList.remove("hidden")
-    }
-    localStorage.setItem("bdr_help_seen", "1")
-  }
-
-  const btn = document.getElementById("helpBtn")
-  if(btn){
-    btn.onclick = toggleHelp
-  }
-})
-
-
-
-
-document.addEventListener("DOMContentLoaded", () => {
-  const btn = document.getElementById("helpBtn")
-  if(btn) btn.onclick = toggleHelp
-})
-
-function bindRevealButton(){
-  const btn = document.getElementById("closeSessionBtn")
-  if(!btn) return
-
-  btn.textContent = "Révéler"
-  btn.onclick = () => {
-    if(typeof goToSummary === "function"){
-      goToSummary()
-    } else {
-      alert("Erreur : fonction de synthèse introuvable.")
-    }
-  }
-}
-
-document.addEventListener("DOMContentLoaded", bindRevealButton)
-bindRevealButton()
 
 window.goToSummary = goToSummary
 window.backToSession = backToSession
+
+function renderInlineSummary(){
+  const host = $("syntheseInline")
+  if(!host || !window.BDR?.session) return
+  const s = window.BDR.session
+  const nodes = s.active || []
+  const links = s.links || []
+  const notes = s.personalNotes || []
+
+  host.innerHTML = `
+    <section class="summary-stats">
+      <div><b>${nodes.length}</b><span>éléments</span></div>
+      <div><b>${links.length}</b><span>liens</span></div>
+      <div><b>${notes.length}</b><span>notes</span></div>
+    </section>
+    <section class="summary-card summary-notes">
+      <h3>Mes notes</h3>
+      ${notes.length ? `<ul class="summary-list">${notes.map(n => `<li><b>${escapeHtml(n.label)}</b><br>${escapeHtml(n.text)}</li>`).join("")}</ul>` : "<p class='muted'>Aucune note ajoutée.</p>"}
+    </section>
+    <section class="summary-actions">
+      <button onclick="downloadJson()">Télécharger mes données</button>
+    </section>
+  `
+}
 
 function renderSummarySafe(){
   const s = window.BDR.session
@@ -672,9 +669,9 @@ function renderSummary(){
 
   $("summary").innerHTML = `
     <div class="summary-page">
-      <button class="summary-back" onclick="backToSession()">← Retour au tissage</button>
-
-      <button class="summary-back" onclick="backToSession()">← Retour au tissage</button>
+      <div class="summary-topbar">
+        <button class="summary-back" onclick="backToSession()">← Retour au tissage</button>
+      </div>
 
       <section class="summary-hero">
         <h2>Mon tissage</h2>
@@ -701,7 +698,7 @@ function renderSummary(){
         <h3>Ce qui ressort</h3>
         ${
           sorted.length
-            ? sorted.map(n => `<p>${escapeHtml(n.label)}</p>`).join("")
+            ? `<ul class="summary-list">${sorted.map(n => `<li>${escapeHtml(n.label)}</li>`).join("")}</ul>`
             : "<p class='muted'>Aucun élément central pour l’instant.</p>"
         }
       </section>
@@ -710,16 +707,16 @@ function renderSummary(){
         <h3>Connexions fortes</h3>
         ${
           mostLinked.length
-            ? mostLinked.map(([label,count]) => `<p>${escapeHtml(label)} <span>${count} lien(s)</span></p>`).join("")
+            ? `<ul class="summary-list">${mostLinked.map(([label,count]) => `<li>${escapeHtml(label)} <span>${count} lien(s)</span></li>`).join("")}</ul>`
             : "<p class='muted'>Aucun lien tissé.</p>"
         }
       </section>
 
-      <section class="summary-card">
+      <section class="summary-card summary-notes">
         <h3>Mes notes</h3>
         ${
           notes.length
-            ? notes.map(n => `<p><b>${escapeHtml(n.label)}</b><br>${escapeHtml(n.text)}</p>`).join("")
+            ? `<ul class="summary-list">${notes.map(n => `<li><b>${escapeHtml(n.label)}</b><br>${escapeHtml(n.text)}</li>`).join("")}</ul>`
             : "<p class='muted'>Aucune note ajoutée.</p>"
         }
       </section>
@@ -742,4 +739,3 @@ function renderSummary(){
 
   showScreen("summary")
 }
-

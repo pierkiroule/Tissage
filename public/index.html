@@ -9,24 +9,46 @@
 <body>
   <div id="chronoBadge">⏱ 00:00:00</div>
   <div id="saveBadge">👍</div>
-  <button id="closeSessionBtn" onclick="goToSummary()">Révéler</button>
 
   <section id="start" class="screen active">
     <div class="card">
       <h1>Mon Tissage Résonances</h1>
-      <p>Choisissez les mots qui résonnent. Placez-les et tissez ce que ça vous fait.</p>
+      <p>Entrez votre pseudo puis commencez votre tissage.</p>
 
-      <input id="participantCode" placeholder="Code participant ex. P001" />
-      <input id="sessionCode" placeholder="Code session ex. G01" />
+      <input id="pseudoInput" placeholder="Votre pseudo" />
 
       <button id="startBtn">Commencer</button>
-      <button id="resumeBtn" class="secondary">Reprendre la session</button>
-      <p class="note">Données locales puis transfert vers l’animateur.</p>
     </div>
   </section>
 
   <section id="app" class="app">
-    <header>
+    <header class="app-head">
+      <div class="main-tabs" id="mainTabs">
+        <button class="main-tab active" data-tab="ecouter" type="button">Écouter</button>
+        <button class="main-tab" data-tab="tisser" type="button">TISSER</button>
+        <button class="main-tab" data-tab="synthetiser" type="button">SYNTHÉTISER</button>
+      </div>
+    </header>
+
+    <div id="tabPager" class="tab-pager">
+      <section class="tab-panel active" data-tab-panel="ecouter">
+        <div class="card scan-card">
+          <h2>Écouter</h2>
+          <p>Scannez un QR code pour ouvrir la page web associée.</p>
+          <div class="scan-actions">
+            <input id="qrFileInput" type="file" accept="image/*" capture="environment" />
+            <button id="scanQrBtn" type="button">Scanner le QR code</button>
+          </div>
+          <div class="scan-manual">
+            <input id="manualUrlInput" placeholder="Ou coller une URL (https://...)" />
+            <button id="openManualUrlBtn" type="button">Ouvrir</button>
+          </div>
+          <p id="qrStatus" class="note">Astuce : sur mobile, l’appareil photo s’ouvre via “Scanner le QR code”.</p>
+        </div>
+      </section>
+
+      <section class="tab-panel" data-tab-panel="tisser">
+        <header>
       <h1>Mon Tissage Résonances</h1>
       <div class="question">Ça me fait quoi, ici et maintenant ?</div>
 
@@ -45,6 +67,14 @@
     <button class="noteBtn" id="noteBtn">📝</button>
   </div>
 </footer>
+      </section>
+
+      <section class="tab-panel synthese-panel" data-tab-panel="synthetiser">
+        <h2>SYNTHÉTISER</h2>
+        <p>Retrouvez votre synthèse en direct.</p>
+        <section id="syntheseInline" class="summary-page"></section>
+      </section>
+    </div>
   </section>
 
   <section id="comment" class="screen">
@@ -56,8 +86,6 @@
     </div>
   </section>
 
-  <section id="summary" class="summary"></section>
-
   <script src="/js/data.js"></script>
   <script src="/js/state.js"></script>
   <script src="/js/chrono.js"></script>
@@ -66,27 +94,16 @@
   <script src="/js/emoji.js"></script>
   <script src="/js/app.js"></script>
 
-  <button id="helpBtn" type="button">💡</button>
-
-  <div id="helpPanel" class="hidden">
-    <div class="help-card">
-      <h3>Comment utiliser</h3>
-      <p>
-        Touchez des mots.<br>
-        Déplacez-les.<br><br>
-        Approchez deux bulles → elles se relient.<br>
-        Retouchez deux bulles reliées → le lien se coupe.<br><br>
-        Ajoutez une note 📝.<br><br>
-        Quand c’est prêt → Révéler.
-      </p>
-      <button type="button" onclick="toggleHelp()">Révéler</button>
-    </div>
-  </div>
-
 </body>
 </html>
-<div id="tip" class="tip hidden"></div>
 
-
-
+<div id="qrModal" class="qr-modal hidden">
+  <div class="qr-modal-card">
+    <div class="qr-modal-head">
+      <strong>Page scannée</strong>
+      <button id="closeQrModalBtn" type="button">×</button>
+    </div>
+    <iframe id="qrIframe" title="Page web scannée"></iframe>
+  </div>
+</div>
 
