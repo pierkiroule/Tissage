@@ -7,7 +7,8 @@ let activeMainTab = "ecouter"
 function showScreen(id){
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"))
   $("app").classList.remove("active")
-  $("summary").classList.remove("active")
+  const summaryEl = $("summary")
+  if(summaryEl) summaryEl.classList.remove("active")
 
   if(id === "app") $("app").classList.add("active")
   else if(id === "summary") $("summary").classList.add("active")
