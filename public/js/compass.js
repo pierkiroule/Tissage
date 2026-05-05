@@ -166,7 +166,10 @@ function renderBubbles(){
     const el = document.createElement("div")
 
     el.className = "bubble" + (b.custom ? " custom" : "")
-    el.textContent = getEmoji(b.label, b.family)
+    el.innerHTML = `
+  <div class="bubble-emoji">${getEmoji(b.label, b.family)}</div>
+  <div class="bubble-label">${b.label}</div>
+`
     el.title = b.label
     el.style.width = s + "px"
     el.style.height = s + "px"

@@ -547,3 +547,26 @@ button.done{
   }
 }
 
+
+/* Bubble emoji + label */
+.bubble{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+
+.bubble-emoji{
+  font-size:26px;
+  line-height:1;
+}
+
+.bubble-label{
+  font-size:10px;
+  margin-top:2px;
+  opacity:0.7;
+  max-width:70px;
+  word-wrap:break-word;
+}
+
