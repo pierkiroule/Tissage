@@ -2,6 +2,7 @@ const $ = id => document.getElementById(id)
 
 let openFamily = "corps"
 let showRaw = false
+let activeMainTab = "ecouter"
 
 function showScreen(id){
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"))
@@ -42,10 +43,63 @@ function showApp(){
 }
 
 function renderApp(){
+  renderMainTabs()
   renderFamilyTabs()
   renderChips()
   resizeCompass()
   renderBubbles()
+}
+
+function renderMainTabs(){
+  document.querySelectorAll(".main-tab").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.tab === activeMainTab)
+  })
+  document.querySelectorAll(".tab-panel").forEach(panel => {
+    panel.classList.toggle("active", panel.dataset.tabPanel === activeMainTab)
+  })
+}
+
+function switchMainTab(tab){
+  activeMainTab = tab
+  renderMainTabs()
+}
+
+async function scanQrFromFile(){
+  const input = $("qrFileInput")
+  const status = $("qrStatus")
+  if(!input || !input.files?.length) return
+  if(!("BarcodeDetector" in window)){
+    status.textContent = "Scanner non supporté ici. Collez l’URL manuellement."
+    return
+  }
+  const detector = new BarcodeDetector({ formats: ["qr_code"] })
+  const bitmap = await createImageBitmap(input.files[0])
+  const codes = await detector.detect(bitmap)
+  if(!codes.length || !codes[0].rawValue){
+    status.textContent = "QR non reconnu."
+    return
+  }
+  openScannedPage(codes[0].rawValue)
+  status.textContent = "QR détecté."
+}
+
+function openScannedPage(url){
+  const safe = (url || "").trim()
+  if(!/^https?:\/\//i.test(safe)){
+    alert("URL invalide. Utilisez une URL commençant par http:// ou https://")
+    return
+  }
+  const modal = $("qrModal")
+  const iframe = $("qrIframe")
+  iframe.src = safe
+  modal.classList.remove("hidden")
+}
+
+function closeQrModal(){
+  const modal = $("qrModal")
+  const iframe = $("qrIframe")
+  if(iframe) iframe.src = "about:blank"
+  if(modal) modal.classList.add("hidden")
 }
 
 function renderFamilyTabs(){
@@ -194,6 +248,32 @@ function toggleRaw(){
 function bindUI(){
   $("startBtn").onclick = startSession
   $("noteBtn").onclick = addNote
+  $("openSynthesisBtn").onclick = goToSummary
+  $("scanQrBtn").onclick = () => $("qrFileInput").click()
+  $("qrFileInput").onchange = scanQrFromFile
+  $("openManualUrlBtn").onclick = () => openScannedPage($("manualUrlInput").value)
+  $("closeQrModalBtn").onclick = closeQrModal
+  $("qrModal").onclick = e => {
+    if(e.target.id === "qrModal") closeQrModal()
+  }
+
+  document.querySelectorAll(".main-tab").forEach(btn => {
+    btn.onclick = () => switchMainTab(btn.dataset.tab)
+  })
+
+  const pager = $("tabPager")
+  let startX = 0
+  let dx = 0
+  pager.addEventListener("touchstart", e => { startX = e.changedTouches[0].clientX }, { passive: true })
+  pager.addEventListener("touchmove", e => { dx = e.changedTouches[0].clientX - startX }, { passive: true })
+  pager.addEventListener("touchend", () => {
+    if(Math.abs(dx) < 50) return
+    const tabs = ["ecouter", "tisser", "synthetiser"]
+    const idx = tabs.indexOf(activeMainTab)
+    const next = dx < 0 ? Math.min(idx + 1, tabs.length - 1) : Math.max(idx - 1, 0)
+    switchMainTab(tabs[next])
+    dx = 0
+  })
 
   const closeBtn = $("closeSessionBtn")
   if(closeBtn) closeBtn.onclick = goToSummary
@@ -742,4 +822,3 @@ function renderSummary(){
 
   showScreen("summary")
 }
-

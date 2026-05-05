@@ -55,6 +55,82 @@ button{
 .app.active{
   display:flex;
 }
+.app-head{
+  border-bottom:1px solid var(--border);
+}
+.main-tabs{
+  display:flex;
+  gap:8px;
+  overflow:auto;
+}
+.main-tab{
+  flex:1;
+  min-width:110px;
+  padding:10px 12px;
+  border-radius:12px;
+}
+.main-tab.active{
+  background:#000;
+  color:#fff;
+}
+.tab-pager{
+  flex:1;
+  overflow:hidden;
+}
+.tab-panel{
+  display:none;
+  height:100%;
+}
+.tab-panel.active{
+  display:flex;
+  flex-direction:column;
+}
+.scan-card{
+  margin:16px auto;
+}
+.scan-actions,.scan-manual{
+  display:flex;
+  gap:8px;
+  margin:8px 0;
+}
+#qrFileInput{
+  display:none;
+}
+.synthese-panel{
+  padding:16px;
+  gap:10px;
+}
+.qr-modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  z-index:5000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.qr-modal.hidden{ display:none; }
+.qr-modal-card{
+  background:#fff;
+  width:min(920px,94vw);
+  height:min(85vh,720px);
+  border-radius:16px;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.qr-modal-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 12px;
+  border-bottom:1px solid var(--border);
+}
+#qrIframe{
+  border:none;
+  width:100%;
+  flex:1;
+}
 
 .summary{
   display:none;
