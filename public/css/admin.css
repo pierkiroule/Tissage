@@ -1,0 +1,10 @@
+body{margin:0;background:#f6f3ee;color:#25221e;font-family:system-ui,sans-serif}
+main{max-width:1000px;margin:auto;padding:18px}
+.card{background:white;border:1px solid #d9d2c8;border-radius:18px;padding:16px;margin-bottom:14px}
+h1,h2{font-family:Georgia,serif;font-weight:400;color:#317f72}
+button,.btn{display:inline-block;border:0;border-radius:12px;padding:11px 14px;margin:4px;background:#317f72;color:white;font-weight:800;text-decoration:none}
+button.danger{background:white;color:#b85b50;border:1.5px solid #b85b50}
+table{width:100%;border-collapse:collapse;background:white}
+th,td{border:1px solid #ddd;padding:8px;text-align:left;font-size:14px}
+th{background:#eee9df}
+p{color:#6f675f}

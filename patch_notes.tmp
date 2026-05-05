@@ -1,0 +1,25 @@
+  el.onpointerup = e=>{
+    if(!drag){
+      if(b.noteText){
+        alert(b.noteText)
+      }
+      return
+    }
+
+    Object.assign(b, measures(b))
+
+    logEvent("word_move", {
+      label:b.label,
+      family:b.family,
+      x:Math.round(b.x),
+      y:Math.round(b.y),
+      ...measures(b)
+    })
+
+    drag = null
+    contactMemory = new Set()
+
+    el.classList.remove("drag")
+    saveSession()
+    draw()
+  }

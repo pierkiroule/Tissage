@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BDR Admin</title>
+  <link rel="stylesheet" href="/css/admin.css" />
+</head>
+<body>
+<main>
+  <div class="card">
+    <h1>BDR Collecteur</h1>
+    <p>Interface animateur locale. Les données restent sur cet appareil.</p>
+
+    <a class="btn" href="/">App participant</a>
+    <a class="btn" href="/api/export-longitudinal">CSV mots</a>
+    <a class="btn" href="/api/export-events">CSV événements</a>
+    <a class="btn" href="/api/export-links">CSV liens</a>
+    <a class="btn" href="/api/export-summary">CSV synthèse</a>
+
+    <button onclick="loadFiles()">Rafraîchir</button>
+    <button class="danger" onclick="clearAll()">Effacer dépôts</button>
+  </div>
+
+  <div class="card">
+    <h2>Dépôts reçus</h2>
+    <p id="count"></p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Participant</th>
+          <th>Session</th>
+          <th>Mots</th>
+          <th>Durée</th>
+          <th>Date</th>
+          <th>Fichier</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+</main>
+
+<script src="/js/admin.js"></script>
+</body>
+</html>
