@@ -81,7 +81,7 @@ function renderChips(){
     const on = window.BDR.session.active.some(x => x.label === label)
     return `
       <button class="chip ${openFamily} ${on ? "used" : ""}" onclick="toggleWord('${openFamily}','${label}')">
-        ${escapeHtml(label)}
+        ${getEmoji(label, openFamily)} ${escapeHtml(label)}
       </button>
     `
   }).join("")
@@ -329,3 +329,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 })
 
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("helpBtn")
+  if(btn) btn.onclick = toggleHelp
+})

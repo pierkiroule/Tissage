@@ -63,24 +63,30 @@
   <script src="/js/chrono.js"></script>
   <script src="/js/compass.js"></script>
   <script src="/js/export.js"></script>
+  <script src="/js/emoji.js"></script>
   <script src="/js/app.js"></script>
+
+  <button id="helpBtn" type="button">💡</button>
+
+  <div id="helpPanel" class="hidden">
+    <div class="help-card">
+      <h3>Comment utiliser</h3>
+      <p>
+        Touchez des mots.<br>
+        Déplacez-les.<br><br>
+        Approchez deux bulles → elles se relient.<br>
+        Retouchez deux bulles reliées → le lien se coupe.<br><br>
+        Ajoutez une note 📝.<br><br>
+        Quand c’est prêt → Révéler.
+      </p>
+      <button type="button" onclick="toggleHelp()">Fermer</button>
+    </div>
+  </div>
+
 </body>
 </html>
 <div id="tip" class="tip hidden"></div>
 
 
-<div id="helpBtn">💡</div>
 
-<div id="helpPanel" class="hidden">
-  <div class="help-card">
-    <h3>Comment utiliser</h3>
-    <p>
-      Touchez des mots.<br>
-      Déplacez-les.<br>
-      Ajoutez une note 📝.<br>
-      Quand c’est prêt → Révéler.
-    </p>
-    <button onclick="toggleHelp()">Fermer</button>
-  </div>
-</div>
 
