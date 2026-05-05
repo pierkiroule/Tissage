@@ -261,20 +261,6 @@ function bindUI(){
     btn.onclick = () => switchMainTab(btn.dataset.tab)
   })
 
-  const pager = $("tabPager")
-  let startX = 0
-  let dx = 0
-  pager.addEventListener("touchstart", e => { startX = e.changedTouches[0].clientX }, { passive: true })
-  pager.addEventListener("touchmove", e => { dx = e.changedTouches[0].clientX - startX }, { passive: true })
-  pager.addEventListener("touchend", () => {
-    if(Math.abs(dx) < 50) return
-    const tabs = ["ecouter", "tisser", "synthetiser"]
-    const idx = tabs.indexOf(activeMainTab)
-    const next = dx < 0 ? Math.min(idx + 1, tabs.length - 1) : Math.max(idx - 1, 0)
-    switchMainTab(tabs[next])
-    dx = 0
-  })
-
   const closeBtn = $("closeSessionBtn")
   if(closeBtn) closeBtn.onclick = goToSummary
 
