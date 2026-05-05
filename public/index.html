@@ -14,14 +14,11 @@
   <section id="start" class="screen active">
     <div class="card">
       <h1>Mon Tissage Résonances</h1>
-      <p>Choisissez les mots qui résonnent. Placez-les et tissez ce que ça vous fait.</p>
+      <p>Entrez votre pseudo puis commencez votre tissage.</p>
 
-      <input id="participantCode" placeholder="Code participant ex. P001" />
-      <input id="sessionCode" placeholder="Code session ex. G01" />
+      <input id="pseudoInput" placeholder="Votre pseudo" />
 
       <button id="startBtn">Commencer</button>
-      <button id="resumeBtn" class="secondary">Reprendre la session</button>
-      <p class="note">Données locales puis transfert vers l’animateur.</p>
     </div>
   </section>
 
@@ -100,26 +97,8 @@
   <script src="/js/emoji.js"></script>
   <script src="/js/app.js"></script>
 
-  <button id="helpBtn" type="button">💡</button>
-
-  <div id="helpPanel" class="hidden">
-    <div class="help-card">
-      <h3>Comment utiliser</h3>
-      <p>
-        Touchez des mots.<br>
-        Déplacez-les.<br><br>
-        Approchez deux bulles → elles se relient.<br>
-        Retouchez deux bulles reliées → le lien se coupe.<br><br>
-        Ajoutez une note 📝.<br><br>
-        Quand c’est prêt → Révéler.
-      </p>
-      <button type="button" onclick="toggleHelp()">Révéler</button>
-    </div>
-  </div>
-
 </body>
 </html>
-<div id="tip" class="tip hidden"></div>
 
 <div id="qrModal" class="qr-modal hidden">
   <div class="qr-modal-card">
@@ -130,6 +109,5 @@
     <iframe id="qrIframe" title="Page web scannée"></iframe>
   </div>
 </div>
-
 
 

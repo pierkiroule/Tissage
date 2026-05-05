@@ -22,18 +22,17 @@ function ensureSessionFields(){
 }
 
 function startSession(){
-  const participant = $("participantCode").value.trim()
-  const session = $("sessionCode").value.trim()
+  const pseudo = $("pseudoInput").value.trim()
 
-  if(!participant){
-    alert("Indiquez un code participant.")
+  if(!pseudo){
+    alert("Indiquez votre pseudo.")
     return
   }
 
-  window.BDR.session = createSession(participant, session)
+  window.BDR.session = createSession(pseudo, "local")
   ensureSessionFields()
   saveSession()
-  logEvent("session_start", { participantCode: participant, sessionCode: session })
+  logEvent("session_start", { pseudo })
   showApp()
 }
 
@@ -292,66 +291,6 @@ document.addEventListener("DOMContentLoaded", () => {
   showScreen("start")
 })
 
-function showTip(text, duration=3000){
-  const el = document.getElementById("tip")
-  if(!el) return
-
-  el.textContent = text
-  el.classList.remove("hidden")
-
-  setTimeout(()=>{
-    el.classList.add("hidden")
-  }, duration)
-}
-
-function initTips(){
-  // au démarrage
-  setTimeout(()=> showTip("Touchez des mots"), 800)
-
-  // si aucune interaction
-  setTimeout(()=>{
-    if(window.BDR.session && window.BDR.session.events.length < 3){
-      showTip("Ajoutez une note 📝")
-    }
-  }, 6000)
-}
-
-document.addEventListener("DOMContentLoaded", ()=>{
-  initTips()
-})
-
-
-function toggleHelp(){
-  const panel = document.getElementById("helpPanel")
-  if(!panel) return
-
-  panel.classList.toggle("hidden")
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  const first = !localStorage.getItem("bdr_help_seen")
-
-  if(first){
-    const panel = document.getElementById("helpPanel")
-    if(panel){
-      panel.classList.remove("hidden")
-    }
-    localStorage.setItem("bdr_help_seen", "1")
-  }
-
-  const btn = document.getElementById("helpBtn")
-  if(btn){
-    btn.onclick = toggleHelp
-  }
-})
-
-
-
-
-document.addEventListener("DOMContentLoaded", () => {
-  const btn = document.getElementById("helpBtn")
-  if(btn) btn.onclick = toggleHelp
-})
 
 function bindRevealButton(){
   const btn = document.getElementById("closeSessionBtn")
