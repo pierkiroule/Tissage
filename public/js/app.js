@@ -752,9 +752,9 @@ function renderSummary(){
 
   $("summary").innerHTML = `
     <div class="summary-page">
-      <button class="summary-back" onclick="backToSession()">← Retour au tissage</button>
-
-      <button class="summary-back" onclick="backToSession()">← Retour au tissage</button>
+      <div class="summary-topbar">
+        <button class="summary-back" onclick="backToSession()">← Retour au tissage</button>
+      </div>
 
       <section class="summary-hero">
         <h2>Mon tissage</h2>
@@ -781,7 +781,7 @@ function renderSummary(){
         <h3>Ce qui ressort</h3>
         ${
           sorted.length
-            ? sorted.map(n => `<p>${escapeHtml(n.label)}</p>`).join("")
+            ? `<ul class="summary-list">${sorted.map(n => `<li>${escapeHtml(n.label)}</li>`).join("")}</ul>`
             : "<p class='muted'>Aucun élément central pour l’instant.</p>"
         }
       </section>
@@ -790,16 +790,16 @@ function renderSummary(){
         <h3>Connexions fortes</h3>
         ${
           mostLinked.length
-            ? mostLinked.map(([label,count]) => `<p>${escapeHtml(label)} <span>${count} lien(s)</span></p>`).join("")
+            ? `<ul class="summary-list">${mostLinked.map(([label,count]) => `<li>${escapeHtml(label)} <span>${count} lien(s)</span></li>`).join("")}</ul>`
             : "<p class='muted'>Aucun lien tissé.</p>"
         }
       </section>
 
-      <section class="summary-card">
+      <section class="summary-card summary-notes">
         <h3>Mes notes</h3>
         ${
           notes.length
-            ? notes.map(n => `<p><b>${escapeHtml(n.label)}</b><br>${escapeHtml(n.text)}</p>`).join("")
+            ? `<ul class="summary-list">${notes.map(n => `<li><b>${escapeHtml(n.label)}</b><br>${escapeHtml(n.text)}</li>`).join("")}</ul>`
             : "<p class='muted'>Aucune note ajoutée.</p>"
         }
       </section>

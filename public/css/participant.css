@@ -763,14 +763,23 @@ button.done{
 }
 
 .summary-page{
-  max-width:560px;
+  max-width:760px;
   margin:0 auto;
-  padding:14px;
+  padding:12px;
+}
+
+.summary-topbar{
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:linear-gradient(#fff 70%, rgba(255,255,255,0));
+  padding-bottom:8px;
 }
 
 .summary-back{
-  width:100%;
-  margin-bottom:12px;
+  width:auto;
+  min-height:44px;
+  padding:10px 14px;
 }
 
 .summary-hero{
@@ -837,6 +846,19 @@ button.done{
   margin:8px 0;
   line-height:1.35;
 }
+.summary-list{
+  margin:0;
+  padding-left:18px;
+  display:grid;
+  gap:8px;
+}
+.summary-list li{
+  line-height:1.35;
+}
+.summary-notes{
+  max-height:45dvh;
+  overflow:auto;
+}
 
 .summary-card span{
   opacity:.6;
@@ -856,6 +878,30 @@ button.done{
 
 .summary-actions button{
   width:100%;
+  min-height:44px;
+}
+
+@media (max-width: 420px){
+  .summary-hero h2{
+    font-size:24px;
+  }
+  .summary-stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+  .summary-stats div:last-child{
+    grid-column:1 / -1;
+  }
+}
+
+@media (min-width: 768px){
+  .summary-page{
+    padding:18px;
+  }
+  .summary-layout{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+  }
 }
 
 /* Replay modal fix */
