@@ -47,6 +47,7 @@ function renderApp(){
   renderChips()
   resizeCompass()
   renderBubbles()
+  renderInlineSummary()
 }
 
 function renderMainTabs(){
@@ -214,21 +215,8 @@ function addNote(){
 }
 
 function goToSummary(){
-  try{
-    if(!window.BDR || !window.BDR.session){
-      alert("Aucune session active.")
-      return
-    }
-
-    const ok = confirm("Révéler votre tissage ?")
-    if(!ok) return
-
-    logEvent("view_summary")
-    saveSession()
-    renderSummary()
-  }catch(e){
-    alert("Erreur synthèse : " + e.message)
-  }
+  switchMainTab("synthetiser")
+  renderInlineSummary()
 }
 
 function backToSession(){
@@ -247,7 +235,6 @@ function toggleRaw(){
 function bindUI(){
   $("startBtn").onclick = startSession
   $("noteBtn").onclick = addNote
-  $("openSynthesisBtn").onclick = goToSummary
   $("scanQrBtn").onclick = () => $("qrFileInput").click()
   $("qrFileInput").onchange = scanQrFromFile
   $("openManualUrlBtn").onclick = () => openScannedPage($("manualUrlInput").value)
@@ -259,9 +246,6 @@ function bindUI(){
   document.querySelectorAll(".main-tab").forEach(btn => {
     btn.onclick = () => switchMainTab(btn.dataset.tab)
   })
-
-  const closeBtn = $("closeSessionBtn")
-  if(closeBtn) closeBtn.onclick = goToSummary
 
   const input = $("noteInput")
   if(input){
@@ -292,25 +276,32 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 
-function bindRevealButton(){
-  const btn = document.getElementById("closeSessionBtn")
-  if(!btn) return
-
-  btn.textContent = "Révéler"
-  btn.onclick = () => {
-    if(typeof goToSummary === "function"){
-      goToSummary()
-    } else {
-      alert("Erreur : fonction de synthèse introuvable.")
-    }
-  }
-}
-
-document.addEventListener("DOMContentLoaded", bindRevealButton)
-bindRevealButton()
-
 window.goToSummary = goToSummary
 window.backToSession = backToSession
+
+function renderInlineSummary(){
+  const host = $("syntheseInline")
+  if(!host || !window.BDR?.session) return
+  const s = window.BDR.session
+  const nodes = s.active || []
+  const links = s.links || []
+  const notes = s.personalNotes || []
+
+  host.innerHTML = `
+    <section class="summary-stats">
+      <div><b>${nodes.length}</b><span>éléments</span></div>
+      <div><b>${links.length}</b><span>liens</span></div>
+      <div><b>${notes.length}</b><span>notes</span></div>
+    </section>
+    <section class="summary-card summary-notes">
+      <h3>Mes notes</h3>
+      ${notes.length ? `<ul class="summary-list">${notes.map(n => `<li><b>${escapeHtml(n.label)}</b><br>${escapeHtml(n.text)}</li>`).join("")}</ul>` : "<p class='muted'>Aucune note ajoutée.</p>"}
+    </section>
+    <section class="summary-actions">
+      <button onclick="downloadJson()">Télécharger mes données</button>
+    </section>
+  `
+}
 
 function renderSummarySafe(){
   const s = window.BDR.session

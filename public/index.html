@@ -9,7 +9,6 @@
 <body>
   <div id="chronoBadge">⏱ 00:00:00</div>
   <div id="saveBadge">👍</div>
-  <button id="closeSessionBtn" onclick="goToSummary()">Révéler</button>
 
   <section id="start" class="screen active">
     <div class="card">
@@ -72,8 +71,8 @@
 
       <section class="tab-panel synthese-panel" data-tab-panel="synthetiser">
         <h2>SYNTHÉTISER</h2>
-        <p>Retrouvez une synthèse de votre tissage.</p>
-        <button id="openSynthesisBtn" type="button">Voir ma synthèse complète</button>
+        <p>Retrouvez votre synthèse en direct.</p>
+        <section id="syntheseInline" class="summary-page"></section>
       </section>
     </div>
   </section>
@@ -86,8 +85,6 @@
       <button id="saveCommentBtn">Voir ma synthèse</button>
     </div>
   </section>
-
-  <section id="summary" class="summary"></section>
 
   <script src="/js/data.js"></script>
   <script src="/js/state.js"></script>
@@ -109,5 +106,4 @@
     <iframe id="qrIframe" title="Page web scannée"></iframe>
   </div>
 </div>
-
 
