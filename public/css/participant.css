@@ -570,3 +570,282 @@ button.done{
   word-wrap:break-word;
 }
 
+
+.link-control{
+  position:absolute;
+  transform:translate(-50%,-50%);
+  display:flex;
+  gap:6px;
+  background:#fff;
+  border:2px solid #000;
+  border-radius:999px;
+  padding:4px;
+  z-index:1500;
+}
+
+.link-control.hidden{
+  display:none;
+}
+
+.link-control button{
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  padding:0;
+  font-size:20px;
+  font-weight:900;
+  background:#fff;
+  color:#000;
+}
+
+.replay-box{
+  background:#fff;
+  border:2px solid #000;
+  border-radius:18px;
+  padding:12px;
+  margin-bottom:12px;
+}
+
+#replayCanvas{
+  width:100%;
+  height:220px;
+  border:2px solid #ddd;
+  border-radius:14px;
+  background:#fff;
+  display:block;
+}
+
+#replaySlider{
+  width:100%;
+  margin:12px 0 6px;
+}
+
+#replayInfo{
+  font-size:14px;
+  font-weight:800;
+  color:#000;
+}
+
+#replaySub{
+  font-size:12px;
+  color:#555;
+}
+
+#replayModal{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(255,255,255,.88);
+  z-index:5000;
+  padding:14px;
+}
+
+#replayModal.visible{
+  display:flex;
+}
+
+.replay-modal-card{
+  width:100%;
+  max-width:520px;
+  background:#fff;
+  border:3px solid #000;
+  border-radius:20px;
+  padding:14px;
+}
+
+.replay-modal-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+
+#replayModalCanvas{
+  width:100%;
+  height:280px;
+  border:2px solid #ddd;
+  border-radius:14px;
+  background:#fff;
+  display:block;
+  margin-top:10px;
+}
+
+#replayModalSlider{
+  width:100%;
+  margin:12px 0 6px;
+}
+
+#replayModalInfo{
+  font-size:14px;
+  font-weight:900;
+}
+
+#replayModalClose{
+  min-width:48px;
+}
+
+.summary-page{
+  max-width:560px;
+  margin:0 auto;
+  padding:14px;
+}
+
+.summary-back{
+  width:100%;
+  margin-bottom:12px;
+}
+
+.summary-hero{
+  border:3px solid #000;
+  border-radius:22px;
+  padding:18px;
+  margin-bottom:12px;
+  background:#fff;
+}
+
+.summary-hero h2{
+  margin:0 0 6px;
+  font-size:28px;
+}
+
+.summary-hero p{
+  margin:0 0 14px;
+  color:#333;
+}
+
+.summary-hero button{
+  width:100%;
+}
+
+.summary-stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-bottom:12px;
+}
+
+.summary-stats div{
+  border:2px solid #000;
+  border-radius:16px;
+  padding:12px 6px;
+  text-align:center;
+  background:#fff;
+}
+
+.summary-stats b{
+  display:block;
+  font-size:26px;
+}
+
+.summary-stats span{
+  font-size:12px;
+  color:#333;
+}
+
+.summary-card{
+  border:2px solid #ddd;
+  border-radius:18px;
+  padding:14px;
+  margin-bottom:12px;
+  background:#fff;
+}
+
+.summary-card h3{
+  margin:0 0 10px;
+  font-size:18px;
+}
+
+.summary-card p{
+  margin:8px 0;
+  line-height:1.35;
+}
+
+.summary-card span{
+  opacity:.6;
+  font-size:13px;
+}
+
+.muted{
+  color:#555;
+}
+
+.summary-actions{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  padding-bottom:20px;
+}
+
+.summary-actions button{
+  width:100%;
+}
+
+/* Replay modal fix */
+#replayModal{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(255,255,255,.94);
+  z-index:5000;
+  padding:12px;
+  overflow:auto;
+}
+
+#replayModal.visible{
+  display:flex;
+}
+
+.replay-modal-card{
+  width:min(94vw,520px);
+  max-height:92dvh;
+  overflow:auto;
+  background:#fff;
+  border:3px solid #000;
+  border-radius:18px;
+  padding:12px;
+}
+
+.replay-modal-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:8px;
+}
+
+.replay-modal-head h3{
+  margin:0;
+  font-size:18px;
+}
+
+#replayModalCanvas{
+  width:100%;
+  height:min(48dvh,320px);
+  border:2px solid #ddd;
+  border-radius:14px;
+  background:#fff;
+  display:block;
+}
+
+#replayModalSlider{
+  width:100%;
+  margin:12px 0 6px;
+}
+
+#replayModalInfo{
+  font-size:13px;
+  font-weight:800;
+  line-height:1.3;
+}
+
+#replayModalClose{
+  width:44px;
+  min-width:44px;
+  height:38px;
+  padding:0;
+  font-size:22px;
+}
