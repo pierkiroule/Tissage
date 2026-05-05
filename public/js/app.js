@@ -275,3 +275,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
   showScreen("start")
 })
+
+function showTip(text, duration=3000){
+  const el = document.getElementById("tip")
+  if(!el) return
+
+  el.textContent = text
+  el.classList.remove("hidden")
+
+  setTimeout(()=>{
+    el.classList.add("hidden")
+  }, duration)
+}
+
+function initTips(){
+  // au démarrage
+  setTimeout(()=> showTip("Touchez des mots"), 800)
+
+  // si aucune interaction
+  setTimeout(()=>{
+    if(window.BDR.session && window.BDR.session.events.length < 3){
+      showTip("Ajoutez une note 📝")
+    }
+  }, 6000)
+}
+
+document.addEventListener("DOMContentLoaded", ()=>{
+  initTips()
+})
+

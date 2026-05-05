@@ -396,3 +396,21 @@ button.done{
 #closeSessionBtn.hidden{
   display:none;
 }
+
+.tip{
+  position:fixed;
+  bottom:80px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#fff;
+  border:2px solid #000;
+  border-radius:999px;
+  padding:8px 14px;
+  font-size:13px;
+  font-weight:700;
+  z-index:1000;
+}
+
+.tip.hidden{
+  display:none;
+}
