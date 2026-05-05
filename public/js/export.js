@@ -94,7 +94,6 @@ function downloadJson(){
   URL.revokeObjectURL(url)
 }
 
-async function sendToAnimator(){
   const status = document.getElementById("sendStatus")
   status.textContent = "Envoi..."
 
@@ -144,4 +143,11 @@ function buildParticipantReport(){
     mostLinkedWords,
     notes
   }
+}
+
+function sendByMail(){
+  const subject = encodeURIComponent("Mes données Tissage")
+  const body = encodeURIComponent("Je t’envoie mon fichier JSON en pièce jointe.")
+
+  window.location.href = `mailto:?subject=${subject}&body=${body}`
 }

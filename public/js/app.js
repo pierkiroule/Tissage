@@ -219,8 +219,7 @@ function renderSummary(){
 
       <div class="box">
         <button onclick="toggleRaw()">Voir les données</button>
-        <button onclick="sendToAnimator()">Envoyer à l’animateur</button>
-        <button onclick="downloadJson()">Télécharger</button>
+        <button onclick="downloadJson()">Télécharger mes données</button>
         <button class="danger" onclick="clearSession()">Effacer local</button>
         <p id="sendStatus"></p>
       </div>
