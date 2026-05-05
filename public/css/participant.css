@@ -414,3 +414,53 @@ button.done{
 .tip.hidden{
   display:none;
 }
+
+#helpBtn{
+  position:fixed;
+  bottom:16px;
+  right:16px;
+  font-size:22px;
+  background:#fff;
+  border:2px solid #000;
+  border-radius:999px;
+  padding:8px;
+  z-index:1200;
+}
+
+#helpPanel{
+  position:fixed;
+  inset:0;
+  background:rgba(255,255,255,.95);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:1500;
+}
+
+#helpPanel.hidden{
+  display:none;
+}
+
+.help-card{
+  max-width:320px;
+  background:#fff;
+  border:3px solid #000;
+  border-radius:16px;
+  padding:16px;
+  text-align:center;
+}
+
+.help-card h3{
+  margin:0 0 10px;
+}
+
+.help-card p{
+  line-height:1.4;
+  font-size:15px;
+}
+
+.help-card button{
+  margin-top:10px;
+  width:100%;
+}
+

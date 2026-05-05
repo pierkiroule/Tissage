@@ -304,3 +304,28 @@ document.addEventListener("DOMContentLoaded", ()=>{
   initTips()
 })
 
+
+function toggleHelp(){
+  const panel = document.getElementById("helpPanel")
+  if(!panel) return
+
+  panel.classList.toggle("hidden")
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const first = !localStorage.getItem("bdr_help_seen")
+
+  if(first){
+    const panel = document.getElementById("helpPanel")
+    if(panel){
+      panel.classList.remove("hidden")
+    }
+    localStorage.setItem("bdr_help_seen", "1")
+  }
+
+  const btn = document.getElementById("helpBtn")
+  if(btn){
+    btn.onclick = toggleHelp
+  }
+})
+
