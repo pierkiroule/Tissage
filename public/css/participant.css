@@ -1549,3 +1549,32 @@ button.done{
     width:min(92vw,980px);
   }
 }
+
+/* Fix UI synthèse: prevent ghost top block and stabilize first fold on mobile */
+#syntheseInline.summary-inline-host{
+  display:block;
+  padding-top:0;
+}
+
+#syntheseInline.summary-inline-host > .summary-hero{
+  margin-top:0;
+}
+
+#syntheseInline.summary-inline-host > #livingResonanceMap,
+#syntheseInline.summary-inline-host > .living-map,
+#syntheseInline.summary-inline-host > .timelapse-map{
+  display:none !important;
+}
+
+.summary-map-empty{
+  min-height:180px;
+  border-radius:22px;
+  border:2px dashed #c9d7ff;
+  background:linear-gradient(180deg,#f8fbff,#eef4ff);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  text-align:center;
+  color:#4b5563;
+}

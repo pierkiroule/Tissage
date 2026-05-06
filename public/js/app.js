@@ -422,6 +422,8 @@ function renderInlineSummary(){
   const host = $("syntheseInline")
   if(!host || !window.BDR?.session) return
 
+  host.classList.add("summary-inline-host")
+
   const s = window.BDR.session
   const nodes = s.active || []
   const links = s.links || []
@@ -1036,6 +1038,16 @@ function renderLivingResonanceMap(nodes, links){
     color:colors[n.family] || "#ffffff",
     c:centrality[n.id] || 0
   }))
+
+
+  if(!points.length){
+    host.innerHTML = `
+      <div class="summary-map-empty" role="img" aria-label="Carte en attente">
+        <p>Ajoutez des mots dans le tissage pour voir la carte vivante.</p>
+      </div>
+    `
+    return
+  }
 
   host.innerHTML = `
     <svg viewBox="0 0 ${w} ${h}" class="simple-reso-map" role="img" aria-label="Paysage vivant de résonances">
