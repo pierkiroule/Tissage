@@ -101,9 +101,9 @@
       <section class="tab-panel" data-tab-panel="ecouter">
         <div class="card scan-card">
           <h2>Écouter</h2>
-          <p>Parcours sonore : scannez un QR code pour déverrouiller chaque étape.</p>
+          <p>Mon parcours d’écoute sensible.</p>
           <div id="qrStepsCircle" class="qr-steps-circle"></div>
-          <p id="qrStatus" class="note">Touchez une étape pour scanner son QR code.</p>
+          <p id="qrStatus" class="note">Touchez un numéro pour ouvrir sa fiche d’étape.</p>
         </div>
       </section>
 
@@ -160,15 +160,10 @@
       <strong id="qrModalTitle">Étape du parcours</strong>
       <button id="closeQrModalBtn" type="button">×</button>
     </div>
-    <div class="scan-actions">
-      <input id="qrFileInput" type="file" accept="image/*" capture="environment" />
-      <button id="scanQrBtn" type="button">Scanner le QR code</button>
+    <div id="qrModalBody" class="qr-modal-body"></div>
+    <div class="qr-modal-footer">
+      <button id="goToTissageBtn" type="button">Noter mes impressions dans Tissage réseau</button>
     </div>
-    <div class="scan-manual">
-      <input id="manualUrlInput" placeholder="Ou coller une URL (https://...)" />
-      <button id="openManualUrlBtn" type="button">Ouvrir</button>
-    </div>
-    <iframe id="qrIframe" title="Page web scannée"></iframe>
   </div>
 </div>
 
