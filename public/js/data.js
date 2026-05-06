@@ -1,8 +1,8 @@
 window.BDR_WORDS = {
-  corps: ["me détend", "me tend", "m’alourdit", "m’allège"],
-  emotion: ["m’apaise", "m’inquiète", "me plaît", "me dérange"],
-  activation: ["me calme", "me stimule", "m’agite", "me ralentit"],
-  lien: ["me relie", "m’éloigne", "m’immerge", "me met à distance"],
+  corps: ["détente", "tension", "lourdeur", "légèreté"],
+  emotion: ["apaisement", "inquiétude", "plaisir", "gêne"],
+  activation: ["calme", "stimulation", "agitation", "ralentissement"],
+  lien: ["connexion", "éloignement", "immersion", "distance"],
   perso: []
 }
 
