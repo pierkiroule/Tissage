@@ -559,9 +559,9 @@ function buildCategoryTimelineData(session){
 
 function buildRelationHighlights(session){
   const events = Array.isArray(session?.events) ? session.events : []
-  if(!events.length) return []
+  const links = Array.isArray(session?.links) ? session.links : []
 
-  const totalMs = Math.max(...events.map(e => Number(e?.elapsedMs || 0)), 0)
+  const totalMs = events.length ? Math.max(...events.map(e => Number(e?.elapsedMs || 0)), 0) : 0
   const midMs = totalMs / 2
   const relStats = {}
 
@@ -576,9 +576,17 @@ function buildRelationHighlights(session){
     else relStats[key].second += 1
   }
 
-  events.forEach(e => {
-    if(e?.type === "link_create") addRelation(e?.source, e?.target, e?.elapsedMs)
-  })
+  if(events.length){
+    events.forEach(e => {
+      if(e?.type === "link_create") addRelation(e?.source, e?.target, e?.elapsedMs)
+    })
+  }
+
+  // Fallback: if the session is very short and did not emit link_create events yet,
+  // reuse the current links snapshot so "Relations marquantes" still shows useful info.
+  if(!Object.keys(relStats).length && links.length){
+    links.forEach(l => addRelation(l?.a, l?.b, midMs))
+  }
 
   return Object.values(relStats)
     .sort((x, y) => y.total - x.total)
@@ -730,7 +738,7 @@ function renderInlineSummary(){
         <ul class="summary-list">
           ${relationHighlights.length
             ? relationHighlights.map(rel => `<li><b>${escapeHtml(rel.a)} ↔ ${escapeHtml(rel.b)}</b><span>${rel.total} occurrence(s) · ${rel.trend}</span></li>`).join("")
-            : "<li class='muted'>Pas encore assez de liens pour dégager des relations marquantes.</li>"
+            : "<li class='muted'>Créez un premier lien dans Tisser pour faire apparaître des relations marquantes.</li>"
           }
         </ul>
       </section>
