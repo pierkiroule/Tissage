@@ -557,6 +557,41 @@ function buildCategoryTimelineData(session){
   return { categories: prettified, frames }
 }
 
+function buildRelationHighlights(session){
+  const events = Array.isArray(session?.events) ? session.events : []
+  if(!events.length) return []
+
+  const totalMs = Math.max(...events.map(e => Number(e?.elapsedMs || 0)), 0)
+  const midMs = totalMs / 2
+  const relStats = {}
+
+  const addRelation = (a, b, elapsedMs) => {
+    if(!a || !b) return
+    const left = String(a)
+    const right = String(b)
+    const key = left < right ? `${left}|||${right}` : `${right}|||${left}`
+    if(!relStats[key]) relStats[key] = { a: key.split("|||")[0], b: key.split("|||")[1], total: 0, first: 0, second: 0 }
+    relStats[key].total += 1
+    if(Number(elapsedMs || 0) <= midMs) relStats[key].first += 1
+    else relStats[key].second += 1
+  }
+
+  events.forEach(e => {
+    if(e?.type === "link_create") addRelation(e?.source, e?.target, e?.elapsedMs)
+  })
+
+  return Object.values(relStats)
+    .sort((x, y) => y.total - x.total)
+    .slice(0, 5)
+    .map(item => {
+      let trend = "stable"
+      if(item.first === 0 && item.second > 0) trend = "nouveau"
+      else if(item.second > item.first) trend = "renforcé"
+      else if(item.second < item.first) trend = "en retrait"
+      return { ...item, trend }
+    })
+}
+
 function renderCategoryTimelineFrame(data, frameIndex){
   const barsHost = document.getElementById("categoryTimelineBars")
   const infoHost = document.getElementById("categoryTimelineInfo")
@@ -646,6 +681,7 @@ function renderInlineSummary(){
   const events = s.events || []
   const syntheseComments = getSyntheseComments()
   const insights = buildSyntheseInsights(s)
+  const relationHighlights = buildRelationHighlights(s)
 
   host.innerHTML = `
     <section class="summary-minimal">
@@ -686,6 +722,17 @@ function renderInlineSummary(){
         </label>
         <input id="categoryTimelineSlider" class="category-timeline-slider" type="range" min="0" max="0" value="0" step="1">
         <p id="categoryTimelineInfo" class="category-timeline-info muted"></p>
+      </section>
+
+      <section class="summary-minimal-card">
+        <h3>Relations marquantes</h3>
+        <p class="muted">Les liens les plus construits pendant votre parcours, avec leur évolution.</p>
+        <ul class="summary-list">
+          ${relationHighlights.length
+            ? relationHighlights.map(rel => `<li><b>${escapeHtml(rel.a)} ↔ ${escapeHtml(rel.b)}</b><span>${rel.total} occurrence(s) · ${rel.trend}</span></li>`).join("")
+            : "<li class='muted'>Pas encore assez de liens pour dégager des relations marquantes.</li>"
+          }
+        </ul>
       </section>
 
       <section class="summary-minimal-card">
