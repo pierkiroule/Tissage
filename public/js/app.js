@@ -425,189 +425,64 @@ function renderInlineSummary(){
   const host = $("syntheseInline")
   if(!host || !window.BDR?.session) return
 
-  host.classList.add("summary-inline-host")
-
   const s = window.BDR.session
   const nodes = s.active || []
   const links = s.links || []
   const notes = s.personalNotes || []
   const events = s.events || []
-
-  const possibleLinks = nodes.length > 1
-    ? (nodes.length * (nodes.length - 1)) / 2
-    : 0
-
-  const density = possibleLinks
-    ? Math.round((links.length / possibleLinks) * 100)
-    : 0
-
-  const densityLabel =
-    density < 20 ? "Paysage aéré" :
-    density < 50 ? "Paysage équilibré" :
-    "Paysage dense"
-
-  const centrality = {}
-
-  links.forEach(l => {
-    if(l.a) centrality[l.a] = (centrality[l.a] || 0) + 1
-    if(l.b) centrality[l.b] = (centrality[l.b] || 0) + 1
-  })
-
-  const centralNodes = [...nodes]
-    .sort((a,b) => (centrality[b.id] || 0) - (centrality[a.id] || 0))
-    .slice(0,5)
-
-  const isolatedNodes = nodes.filter(n =>
-    !links.some(l => l.a === n.id || l.b === n.id)
-  )
-
-  const familyCounts = nodes.reduce((acc, n) => {
-    acc[n.family] = (acc[n.family] || 0) + 1
-    return acc
-  }, {})
-
-  const firstEvents = events.slice(0,5)
-  const lastEvents = events.slice(-5)
   const syntheseComments = getSyntheseComments()
+  const replayIndex = Math.max(0, Number(s.inlineReplayIndex || Math.max(events.length - 1, 0)))
+  const replayEvent = events[replayIndex]
 
   host.innerHTML = `
-    <section class="summary-hero">
-      <div class="summary-kicker">Cartographie résonante émergente</div>
-      <h2>Paysage vivant de résonances</h2>
-      <p class="summary-intro">
-        Une visualisation des associations et transformations relationnelles
-        émergentes pendant le parcours sonore.
-      </p>
-    </section>
+    <section class="summary-minimal">
+      <header class="summary-minimal-hero">
+        <h2>Synthèse de votre expérience</h2>
+        <p>Version simplifiée pour un affichage stable sur mobile.</p>
+      </header>
 
-    <section class="summary-card">
-      <h3>Carte vivante</h3>
-      <p class="muted">
-        Une constellation animée du paysage résonant.
-      </p>
-
-      <div id="livingResonanceMap"></div>
-    </section>
-
-
-    <section class="summary-stats">
-      <div><b>${nodes.length}</b><span>éléments</span></div>
-      <div><b>${links.length}</b><span>liens</span></div>
-      <div><b>${notes.length}</b><span>notes</span></div>
-    </section>
-
-    <section class="summary-section">
-      <h2>Structure</h2>
-      <p class="muted">La forme actuelle du paysage résonant.</p>
-
-      <section class="summary-card">
-        <h3>Densité relationnelle</h3>
-        <div class="density-row">
-          <div class="density-bar">
-            <div class="density-fill" style="width:${density}%"></div>
-          </div>
-          <b>${density}%</b>
-        </div>
-        <p class="muted">${densityLabel}</p>
+      <section class="summary-minimal-stats">
+        <article><b>${nodes.length}</b><span>éléments</span></article>
+        <article><b>${links.length}</b><span>liens</span></article>
+        <article><b>${notes.length}</b><span>notes</span></article>
       </section>
 
-      <section class="summary-card">
-        <h3>Zones centrales</h3>
-        ${
-          centralNodes.length
-            ? `<ul class="summary-list">${centralNodes.map(n => `
-              <li>${escapeHtml(n.label)} <span>${centrality[n.id] || 0}</span></li>
-            `).join("")}</ul>`
-            : "<p class='muted'>Aucune centralité détectée.</p>"
-        }
+      <section class="summary-minimal-card">
+        <h3>Replay du timing</h3>
+        <input id="replaySlider" type="range" min="0" max="${Math.max(events.length - 1, 0)}" value="${replayIndex}" step="1" aria-label="Défilement du replay">
+        <p id="replayInfo">${replayEvent ? `${escapeHtml(replayEvent.elapsedLabel || '—')} · ${escapeHtml(replayEvent.type || 'événement')}` : 'Aucun événement enregistré.'}</p>
       </section>
 
-      <section class="summary-card">
-        <h3>Familles dominantes</h3>
-        ${
-          Object.keys(familyCounts).length
-            ? `<ul class="summary-list">${Object.entries(familyCounts).map(([family,count]) => `
-              <li>${escapeHtml(family)} <span>${count}</span></li>
-            `).join("")}</ul>`
-            : "<p class='muted'>Aucune famille dominante.</p>"
-        }
+      <section class="summary-minimal-card">
+        <h3>Votre commentaire sur cette synthèse</h3>
+        <p class="muted">Déposer votre commentaire sur cette synthèse de votre expérience. Que vous apprend cette expérience d’écoute ?</p>
+        <form id="syntheseCommentForm" class="summary-comment-form">
+          <input id="syntheseCommentInput" type="text" maxlength="280" placeholder="Votre commentaire..." required>
+          <button type="submit">Ajouter</button>
+        </form>
+        <ul class="summary-list summary-comment-list">
+          ${syntheseComments.length
+            ? syntheseComments.map(c => `<li><b>${formatCommentDate(c.at)}</b><span>${escapeHtml(c.text)}</span></li>`).join("")
+            : "<li class='muted'>Aucun commentaire pour le moment.</li>"
+          }
+        </ul>
       </section>
-
-      <section class="summary-card">
-        <h3>Zones isolées</h3>
-        ${
-          isolatedNodes.length
-            ? `<ul class="summary-list">${isolatedNodes.map(n => `
-              <li>${escapeHtml(n.label)}</li>
-            `).join("")}</ul>`
-            : "<p class='muted'>Aucune zone isolée.</p>"
-        }
-      </section>
-    </section>
-
-    <section class="summary-section">
-      <h2>Processus</h2>
-      <p class="muted">Les transformations significatives du parcours.</p>
-
-      <section class="summary-card">
-        <h3>Premiers mouvements</h3>
-        ${
-          firstEvents.length
-            ? `<ul class="summary-list">${firstEvents.map(e => `
-              <li><b>${escapeHtml(e.elapsedLabel || "—")}</b> <span>${escapeHtml(e.type || "événement")}</span></li>
-            `).join("")}</ul>`
-            : "<p class='muted'>Aucun mouvement enregistré.</p>"
-        }
-      </section>
-
-      <section class="summary-card">
-        <h3>Derniers mouvements</h3>
-        ${
-          lastEvents.length
-            ? `<ul class="summary-list">${lastEvents.map(e => `
-              <li><b>${escapeHtml(e.elapsedLabel || "—")}</b> <span>${escapeHtml(e.type || "événement")}</span></li>
-            `).join("")}</ul>`
-            : "<p class='muted'>Aucun mouvement enregistré.</p>"
-        }
-      </section>
-    </section>
-
-    <section class="summary-card">
-      <h3>Lecture prudente</h3>
-      <p class="muted">
-        Ce paysage ne dit pas ce que je suis. Il montre comment certaines
-        résonances se sont associées et transformées pendant l’expérience.
-      </p>
-    </section>
-
-    <section class="summary-card summary-feedback">
-      <h3>Votre commentaire sur la synthèse</h3>
-      <p class="muted">Déposer votre commentaire sur cette synthèse de votre expérience. Que vous apprend cette expérience d’écoute ?</p>
-      <form id="syntheseCommentForm" class="summary-comment-form">
-        <input id="syntheseCommentInput" type="text" maxlength="280" placeholder="Votre commentaire..." required>
-        <button type="submit">Ajouter</button>
-      </form>
-      <ul class="summary-list summary-comment-list">
-        ${syntheseComments.length
-          ? syntheseComments.map(c => `<li><b>${formatCommentDate(c.at)}</b><span>${escapeHtml(c.text)}</span></li>`).join("")
-          : "<li class='muted'>Aucun commentaire pour le moment.</li>"
-        }
-      </ul>
-    </section>
-
-    <section class="summary-card replay-card">
-      <h3>Replay accéléré</h3>
-      <p class="muted">Chaque instant horodaté devient une frame du défilé du timing.</p>
-      <canvas id="replayCanvas"></canvas>
-      <input id="replaySlider" type="range" min="0" value="0" step="1" aria-label="Slider replay">
-      <div id="replayInfo">—</div>
-      <button type="button" class="ghost" onclick="openReplayModal()">Ouvrir en plein écran</button>
-    </section>
-
-    <section class="summary-actions">
-      <button onclick="downloadJson()">Télécharger mes données</button>
     </section>
   `
+
+  const slider = document.getElementById('replaySlider')
+  const info = document.getElementById('replayInfo')
+  if(slider && info){
+    slider.oninput = () => {
+      const idx = Number(slider.value)
+      s.inlineReplayIndex = idx
+      saveSession()
+      const evt = events[idx]
+      info.textContent = evt
+        ? `${evt.elapsedLabel || '—'} · ${evt.type || 'événement'}`
+        : 'Aucun événement enregistré.'
+    }
+  }
 
   const commentForm = document.getElementById('syntheseCommentForm')
   const commentInput = document.getElementById('syntheseCommentInput')
@@ -620,15 +495,6 @@ function renderInlineSummary(){
       renderInlineSummary()
     }
   }
-
-  const slider = document.getElementById('replaySlider')
-  if(slider){
-    slider.max = Math.max((events.length || 1) - 1, 0)
-    slider.value = slider.max
-  }
-
-  renderLivingResonanceMap(nodes, links)
-  initReplay()
 }
 
 

@@ -1578,3 +1578,48 @@ button.done{
   text-align:center;
   color:#4b5563;
 }
+
+/* Synthèse minimal reset */
+#syntheseInline{
+  padding:10px 8px 120px;
+}
+
+.summary-minimal{
+  max-width:760px;
+  margin:0 auto;
+  display:grid;
+  gap:12px;
+}
+
+.summary-minimal-hero,
+.summary-minimal-card,
+.summary-minimal-stats article{
+  background:#fff;
+  border:2px solid #000;
+  border-radius:16px;
+}
+
+.summary-minimal-hero,
+.summary-minimal-card{ padding:14px; }
+.summary-minimal-hero h2{ margin:0 0 8px; font-size:28px; }
+.summary-minimal-hero p{ margin:0; color:#4b5563; }
+
+.summary-minimal-stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+
+.summary-minimal-stats article{
+  padding:10px 8px;
+  text-align:center;
+}
+
+.summary-minimal-stats b{ display:block; font-size:24px; }
+.summary-minimal-stats span{ font-size:12px; color:#4b5563; }
+
+#replayInfo{ margin:8px 0 0; font-weight:700; }
+
+@media (max-width:520px){
+  .summary-minimal-stats{ grid-template-columns:1fr; }
+}
