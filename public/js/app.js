@@ -5,26 +5,6 @@ let activeMainTab = "accueil"
 let activeQrStep = null
 let selectedQrStep = null
 const QR_STEPS_TOTAL = 10
-let tipTimeout = null
-
-const MENU_TIPS = {
-  accueil: {
-    title: "Bienvenue 👋",
-    text: "Ici, vous voyez le principe. Ensuite allez sur 🎧 pour le parcours QR, puis 🕸️ pour tisser vos mots, et enfin 📄 pour lire votre synthèse."
-  },
-  ecouter: {
-    title: "🎧 Outil QR code / parcours",
-    text: "Touchez un numéro, puis « Scanner le QR code ». Si besoin, collez l’URL. Quand l’étape est validée, le numéro devient 👂 : cela signifie que l’étape du parcours est reliée à votre session."
-  },
-  tisser: {
-    title: "🕸️ Outil tissage de réseau",
-    text: "1) Touchez des mots-émojis pour les afficher. 2) Faites se toucher 2 bulles pour les relier. 3) Refaites toucher les mêmes bulles pour délier. 4) Retouchez un mot dans la liste pour enlever sa bulle."
-  },
-  synthetiser: {
-    title: "📄 Lire la synthèse écho-évaluative",
-    text: "Lisez ce que votre carte raconte. Regardez les liens, les mots forts et les tendances. Ensuite, ajoutez votre avis personnel en commentaire final pour enrichir la synthèse."
-  }
-}
 const QR_STEP_TEMPLATE = {
   title: "Titre 1",
   subtitle: "Sous-titre 1",
@@ -147,28 +127,16 @@ function renderMainTabs(){
 function switchMainTab(tab){
   activeMainTab = tab
   renderMainTabs()
-  showMenuTip(tab)
 }
 
-function closeMenuTip(){
-  if(tipTimeout){
-    clearTimeout(tipTimeout)
-    tipTimeout = null
-  }
-  const tip = $("menuTip")
-  if(tip) tip.classList.add("hidden")
+function openTutoModal(){
+  const modal = $("tutoModal")
+  if(modal) modal.classList.remove("hidden")
 }
 
-function showMenuTip(tab){
-  const tipData = MENU_TIPS[tab]
-  const tip = $("menuTip")
-  if(!tip || !tipData) return
-  $("menuTipTitle").textContent = tipData.title
-  $("menuTipText").textContent = tipData.text
-  tip.classList.remove("hidden")
-
-  if(tipTimeout) clearTimeout(tipTimeout)
-  tipTimeout = setTimeout(() => closeMenuTip(), 5000)
+function closeTutoModal(){
+  const modal = $("tutoModal")
+  if(modal) modal.classList.add("hidden")
 }
 
 function markQrStepProgress(step, action, data = {}){
@@ -387,9 +355,10 @@ function bindUI(){
   document.querySelectorAll(".main-tab").forEach(btn => {
     btn.onclick = () => switchMainTab(btn.dataset.tab)
   })
-  $("closeMenuTipBtn").onclick = closeMenuTip
-  $("menuTip").onclick = e => {
-    if(e.target.id === "menuTip") closeMenuTip()
+  $("openTutoBtn").onclick = openTutoModal
+  $("closeTutoModalBtn").onclick = closeTutoModal
+  $("tutoModal").onclick = e => {
+    if(e.target.id === "tutoModal") closeTutoModal()
   }
 
   const input = $("noteInput")
