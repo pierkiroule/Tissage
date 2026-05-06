@@ -2,7 +2,7 @@ const $ = id => document.getElementById(id)
 
 let openFamily = "corps"
 let showRaw = false
-let activeMainTab = "ecouter"
+let activeMainTab = "accueil"
 let activeQrStep = null
 const QR_STEPS_TOTAL = 10
 
