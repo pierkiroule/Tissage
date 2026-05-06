@@ -407,9 +407,12 @@ function addSyntheseComment(text){
 
 function formatCommentDate(iso){
   try {
-    return new Date(iso).toLocaleString('fr-FR', {
+    const d = new Date(iso)
+    if(Number.isNaN(d.getTime())) return "—"
+    return d.toLocaleString('fr-FR', {
       day:'2-digit',
       month:'2-digit',
+      year:'numeric',
       hour:'2-digit',
       minute:'2-digit'
     })
@@ -465,6 +468,7 @@ function renderInlineSummary(){
 
   const firstEvents = events.slice(0,5)
   const lastEvents = events.slice(-5)
+  const syntheseComments = getSyntheseComments()
 
   host.innerHTML = `
     <section class="summary-hero">
@@ -584,8 +588,8 @@ function renderInlineSummary(){
         <button type="submit">Ajouter</button>
       </form>
       <ul class="summary-list summary-comment-list">
-        ${getSyntheseComments().length
-          ? getSyntheseComments().map(c => `<li><b>${formatCommentDate(c.at)}</b><span>${escapeHtml(c.text)}</span></li>`).join("")
+        ${syntheseComments.length
+          ? syntheseComments.map(c => `<li><b>${formatCommentDate(c.at)}</b><span>${escapeHtml(c.text)}</span></li>`).join("")
           : "<li class='muted'>Aucun commentaire pour le moment.</li>"
         }
       </ul>
