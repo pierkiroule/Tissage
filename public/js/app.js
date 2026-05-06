@@ -448,7 +448,8 @@ function renderInlineSummary(){
       </section>
 
       <section class="summary-minimal-card">
-        <h3>Replay du timing</h3>
+        <h3>Replay du réseau</h3>
+        <canvas id="replayCanvas" aria-label="Cadre de replay du réseau"></canvas>
         <input id="replaySlider" type="range" min="0" max="${Math.max(events.length - 1, 0)}" value="${replayIndex}" step="1" aria-label="Défilement du replay">
         <p id="replayInfo">${replayEvent ? `${escapeHtml(replayEvent.elapsedLabel || '—')} · ${escapeHtml(replayEvent.type || 'événement')}` : 'Aucun événement enregistré.'}</p>
       </section>
@@ -471,17 +472,14 @@ function renderInlineSummary(){
   `
 
   const slider = document.getElementById('replaySlider')
-  const info = document.getElementById('replayInfo')
-  if(slider && info){
+  if(slider){
     slider.oninput = () => {
       const idx = Number(slider.value)
       s.inlineReplayIndex = idx
       saveSession()
-      const evt = events[idx]
-      info.textContent = evt
-        ? `${evt.elapsedLabel || '—'} · ${evt.type || 'événement'}`
-        : 'Aucun événement enregistré.'
+      drawReplay(idx)
     }
+    drawReplay(Number(slider.value || 0))
   }
 
   const commentForm = document.getElementById('syntheseCommentForm')
