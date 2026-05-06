@@ -250,11 +250,23 @@ function bindDrag(el,b){
 
     Object.assign(b, measures(b))
 
+    const from = {
+      x: Math.round(drag.x),
+      y: Math.round(drag.y)
+    }
+
+    const to = {
+      x: Math.round(b.x),
+      y: Math.round(b.y)
+    }
+
     logEvent("word_move", {
       label:b.label,
       family:b.family,
-      x:Math.round(b.x),
-      y:Math.round(b.y),
+      from,
+      to,
+      x:to.x,
+      y:to.y,
       ...measures(b)
     })
 
