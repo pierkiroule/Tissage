@@ -1,7 +1,6 @@
 const $ = id => document.getElementById(id)
 
 let openFamily = "corps"
-let showRaw = false
 let activeMainTab = "accueil"
 let activeQrStep = null
 const QR_STEPS_TOTAL = 10
@@ -276,8 +275,7 @@ function addNote(){
 }
 
 function goToSummary(){
-  switchMainTab("synthetiser")
-  renderInlineSummary()
+  renderSummary()
 }
 
 function backToSession(){
@@ -288,10 +286,7 @@ function backToSession(){
 
 
 
-function toggleRaw(){
-  showRaw = !showRaw
-  renderSummary()
-}
+
 
 function bindUI(){
   $("startBtn").onclick = startSession
@@ -363,137 +358,6 @@ function renderInlineSummary(){
       <button onclick="downloadJson()">Télécharger mes données</button>
     </section>
   `
-}
-
-function renderSummarySafe(){
-  const s = window.BDR.session
-  const nodes = s.active || []
-  const links = s.links || []
-  const notes = s.personalNotes || []
-
-  $("summary").innerHTML = `
-    <button onclick="backToSession()">← Retour au tissage</button>
-    <h2>Mon tissage</h2>
-      <div class="box"><button onclick="openReplayModal()">Voir le replay</button></div>
-
-    <div class="box">
-      <div class="metric"><span>Mots / notes</span><b>${nodes.length}</b></div>
-      <div class="metric"><span>Liens</span><b>${links.length}</b></div>
-      <div class="metric"><span>Notes</span><b>${notes.length}</b></div>
-    </div>
-
-    <div class="box">
-      <h3>Mes notes</h3>
-      ${notes.map(n => `<p><b>${escapeHtml(n.label)}</b> — ${escapeHtml(n.text)}</p>`).join("") || "<p>Aucune note.</p>"}
-    </div>
-
-    <div class="box">
-      <button onclick="downloadJson()">Télécharger mes données</button>
-      <button class="danger" onclick="clearSession()">Effacer local</button>
-    </div>
-  `
-
-  showScreen("summary")
-}
-
-const oldRenderSummary = renderSummary
-renderSummary = function(){
-  try{
-    oldRenderSummary()
-  }catch(e){
-    console.warn("Fallback summary", e)
-    renderSummarySafe()
-  }
-}
-
-
-
-
-
-
-
-renderSummary = function(){
-  const s = window.BDR.session
-  const nodes = s.active || []
-  const links = s.links || []
-  const notes = s.personalNotes || []
-  const events = s.events || []
-
-  const sorted = [...nodes]
-    .map(n => ({ ...n, score: n.resonance ?? 0 }))
-    .sort((a,b) => b.score - a.score)
-    .slice(0,5)
-
-  const degree = {}
-  links.forEach(l => {
-    degree[l.source] = (degree[l.source] || 0) + 1
-    degree[l.target] = (degree[l.target] || 0) + 1
-  })
-
-  const mostLinked = Object.entries(degree)
-    .sort((a,b) => b[1] - a[1])
-    .slice(0,5)
-
-  $("summary").innerHTML = `
-    <button onclick="backToSession()">← Retour</button>
-
-    <h2>Mon tissage</h2>
-      <div class="box"><button onclick="openReplayModal()">Voir le replay</button></div>
-
-    <div class="replay-box">
-      <h3>Dynamique du tissage</h3>
-      <canvas id="replayCanvas"></canvas>
-      <input id="replaySlider" type="range" min="0" max="${Math.max(events.length - 1, 0)}" value="${Math.max(events.length - 1, 0)}">
-      <div id="replayInfo">—</div>
-      <div id="replaySub">Déplacez le curseur pour revoir l’évolution.</div>
-    </div>
-
-    <div class="box">
-      <div class="metric"><span>Éléments</span><b>${nodes.length}</b></div>
-      <div class="metric"><span>Liens</span><b>${links.length}</b></div>
-      <div class="metric"><span>Notes</span><b>${notes.length}</b></div>
-    </div>
-
-    <div class="box">
-      <h3>Ce qui ressort</h3>
-      ${
-        sorted.length
-          ? sorted.map(n => `<p>${escapeHtml(n.label)}</p>`).join("")
-          : "<p>—</p>"
-      }
-    </div>
-
-    <div class="box">
-      <h3>Connexions fortes</h3>
-      ${
-        mostLinked.length
-          ? mostLinked.map(([l,c]) => `<p>${escapeHtml(l)} — ${c}</p>`).join("")
-          : "<p>—</p>"
-      }
-    </div>
-
-    <div class="box">
-      <h3>Notes</h3>
-      ${
-        notes.length
-          ? notes.map(n => `<p>${escapeHtml(n.text)}</p>`).join("")
-          : "<p>Aucune</p>"
-      }
-    </div>
-
-    <div class="box">
-      <p style="opacity:.7">
-        Ce tissage reflète une expérience à un moment donné.
-      </p>
-    </div>
-
-    <div class="box">
-      <button onclick="downloadJson()">Télécharger mes données</button>
-    </div>
-  `
-
-  showScreen("summary")
-  initReplay()
 }
 
 function initReplay(){
@@ -719,10 +583,14 @@ function renderSummary(){
     .slice(0,4)
 
   const degree = {}
-  links.forEach(l => {
-    degree[l.source] = (degree[l.source] || 0) + 1
-    degree[l.target] = (degree[l.target] || 0) + 1
-  })
+
+links.forEach(l => {
+  const a = nodes.find(n => n.id === l.a)?.label || l.source
+  const b = nodes.find(n => n.id === l.b)?.label || l.target
+
+  if(a) degree[a] = (degree[a] || 0) + 1
+  if(b) degree[b] = (degree[b] || 0) + 1
+})
 
   const mostLinked = Object.entries(degree)
     .sort((a,b) => b[1] - a[1])
