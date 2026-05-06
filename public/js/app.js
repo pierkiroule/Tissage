@@ -3,6 +3,8 @@ const $ = id => document.getElementById(id)
 let openFamily = "corps"
 let showRaw = false
 let activeMainTab = "ecouter"
+let activeQrStep = null
+const QR_STEPS_TOTAL = 10
 
 function showScreen(id){
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"))
@@ -20,6 +22,7 @@ function ensureSessionFields(){
   if(!s.links) s.links = []
   if(!s.personalNotes) s.personalNotes = []
   if(!s.active) s.active = []
+  if(!Array.isArray(s.unlockedQrSteps)) s.unlockedQrSteps = []
 }
 
 function startSession(){
@@ -44,11 +47,45 @@ function showApp(){
 
 function renderApp(){
   renderMainTabs()
+  renderQrSteps()
   renderFamilyTabs()
   renderChips()
   resizeCompass()
   renderBubbles()
   renderInlineSummary()
+}
+
+function renderQrSteps(){
+  const host = $("qrStepsCircle")
+  if(!host || !window.BDR?.session) return
+
+  const unlocked = new Set(window.BDR.session.unlockedQrSteps || [])
+  host.innerHTML = Array.from({ length: QR_STEPS_TOTAL }, (_, i) => {
+    const step = i + 1
+    const angle = ((Math.PI * 2) / QR_STEPS_TOTAL) * i - Math.PI / 2
+    const x = 50 + Math.cos(angle) * 40
+    const y = 50 + Math.sin(angle) * 40
+    const isUnlocked = unlocked.has(step)
+    return `
+      <button
+        type="button"
+        class="qr-step ${isUnlocked ? "unlocked" : "locked"}"
+        style="left:${x}%;top:${y}%;"
+        onclick="openQrStep(${step})"
+        aria-label="Étape ${step}"
+      >${isUnlocked ? "👂" : `<span class="qr-step-number">${step}</span>`}</button>
+    `
+  }).join("")
+}
+
+function openQrStep(step){
+  activeQrStep = step
+  const modal = $("qrModal")
+  const title = $("qrModalTitle")
+  const iframe = $("qrIframe")
+  if(title) title.textContent = `Étape ${step} · Scanner un QR code`
+  if(iframe) iframe.src = "about:blank"
+  if(modal) modal.classList.remove("hidden")
 }
 
 function renderMainTabs(){
@@ -94,6 +131,15 @@ function openScannedPage(url){
   const iframe = $("qrIframe")
   iframe.src = safe
   modal.classList.remove("hidden")
+
+  if(activeQrStep !== null){
+    const unlocked = new Set(window.BDR.session.unlockedQrSteps || [])
+    unlocked.add(activeQrStep)
+    window.BDR.session.unlockedQrSteps = Array.from(unlocked).sort((a,b) => a - b)
+    logEvent("qr_step_unlocked", { step: activeQrStep, url: safe })
+    saveSession()
+    renderQrSteps()
+  }
 }
 
 function closeQrModal(){
@@ -101,6 +147,7 @@ function closeQrModal(){
   const iframe = $("qrIframe")
   if(iframe) iframe.src = "about:blank"
   if(modal) modal.classList.add("hidden")
+  activeQrStep = null
 }
 
 function renderFamilyTabs(){
@@ -279,6 +326,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 window.goToSummary = goToSummary
 window.backToSession = backToSession
+window.openQrStep = openQrStep
 
 function renderInlineSummary(){
   const host = $("syntheseInline")

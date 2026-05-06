@@ -34,16 +34,9 @@
       <section class="tab-panel active" data-tab-panel="ecouter">
         <div class="card scan-card">
           <h2>Écouter</h2>
-          <p>Scannez un QR code pour ouvrir la page web associée.</p>
-          <div class="scan-actions">
-            <input id="qrFileInput" type="file" accept="image/*" capture="environment" />
-            <button id="scanQrBtn" type="button">Scanner le QR code</button>
-          </div>
-          <div class="scan-manual">
-            <input id="manualUrlInput" placeholder="Ou coller une URL (https://...)" />
-            <button id="openManualUrlBtn" type="button">Ouvrir</button>
-          </div>
-          <p id="qrStatus" class="note">Astuce : sur mobile, l’appareil photo s’ouvre via “Scanner le QR code”.</p>
+          <p>Parcours sonore : scannez un QR code pour déverrouiller chaque étape.</p>
+          <div id="qrStepsCircle" class="qr-steps-circle"></div>
+          <p id="qrStatus" class="note">Touchez une étape pour scanner son QR code.</p>
         </div>
       </section>
 
@@ -100,10 +93,17 @@
 <div id="qrModal" class="qr-modal hidden">
   <div class="qr-modal-card">
     <div class="qr-modal-head">
-      <strong>Page scannée</strong>
+      <strong id="qrModalTitle">Étape du parcours</strong>
       <button id="closeQrModalBtn" type="button">×</button>
+    </div>
+    <div class="scan-actions">
+      <input id="qrFileInput" type="file" accept="image/*" capture="environment" />
+      <button id="scanQrBtn" type="button">Scanner le QR code</button>
+    </div>
+    <div class="scan-manual">
+      <input id="manualUrlInput" placeholder="Ou coller une URL (https://...)" />
+      <button id="openManualUrlBtn" type="button">Ouvrir</button>
     </div>
     <iframe id="qrIframe" title="Page web scannée"></iframe>
   </div>
 </div>
-
