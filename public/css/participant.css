@@ -150,6 +150,12 @@ button{
 }
 .scan-card{
   margin:16px auto;
+  max-width:680px;
+  padding:20px 18px 24px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:24px;
+  box-shadow:0 12px 28px rgba(30,30,30,.08);
   text-align:center;
 }
 .home-card{
@@ -245,6 +251,33 @@ button{
   border:3px dashed #cfcfcf;
   border-radius:50%;
   background:radial-gradient(circle,#ffffff 0%,#f4f6f9 100%);
+}
+.qr-step-center{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:46%;
+  min-height:54px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+.qr-step-center-btn{
+  width:100%;
+  margin:0;
+  padding:10px 12px;
+  border-radius:999px;
+  border:1px solid #c8d0dc;
+  background:#fff;
+  color:#0f172a;
+  font-weight:700;
+}
+.qr-step-center-hint{
+  color:#64748b;
+  font-size:14px;
+  line-height:1.25;
 }
 .qr-step{
   position:absolute;
@@ -360,8 +393,12 @@ button{
 .qr-modal-footer{
   border-top:1px solid var(--border);
   padding:10px 12px 12px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
 }
-#goToTissageBtn{
+#goToTissageBtn,
+#closeQrModalFooterBtn{
   width:100%;
 }
 

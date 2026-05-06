@@ -103,7 +103,7 @@
           <h2>Écouter</h2>
           <p>Mon parcours d’écoute sensible.</p>
           <div id="qrStepsCircle" class="qr-steps-circle"></div>
-          <p id="qrStatus" class="note">Touchez un numéro pour ouvrir sa fiche d’étape.</p>
+          <p id="qrStatus" class="note">Touchez un numéro, puis le titre au centre pour ouvrir sa fiche d’étape.</p>
         </div>
       </section>
 
@@ -158,10 +158,11 @@
   <div class="qr-modal-card">
     <div class="qr-modal-head">
       <strong id="qrModalTitle">Étape du parcours</strong>
-      <button id="closeQrModalBtn" type="button">×</button>
+      <button id="closeQrModalBtn" type="button" aria-label="Fermer la modale">Fermer</button>
     </div>
     <div id="qrModalBody" class="qr-modal-body"></div>
     <div class="qr-modal-footer">
+      <button id="closeQrModalFooterBtn" type="button" onclick="closeQrModal()">Fermer</button>
       <button id="goToTissageBtn" type="button">Noter mes impressions dans Tissage réseau</button>
     </div>
   </div>
