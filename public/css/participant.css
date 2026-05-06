@@ -630,12 +630,17 @@ button.done{
   text-decoration-style:dashed;
 }
 
-/* Catégories : encadrées */
+/* Catégories : encadrées en couleur */
 .family-tab{
-  border:2px solid #999 !important;
   background:#fff !important;
   color:#000 !important;
 }
+
+.family-tab.corps{ border-color:var(--corps) !important; }
+.family-tab.emotion{ border-color:var(--emotion) !important; }
+.family-tab.activation{ border-color:var(--activation) !important; }
+.family-tab.lien{ border-color:var(--lien) !important; }
+.family-tab.perso{ border-color:var(--perso) !important; }
 
 .family-tab.active{
   border-width:4px !important;
