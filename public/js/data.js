@@ -15,11 +15,11 @@ window.BDR_COLORS = {
 }
 
 window.BDR_LABELS = {
-  corps: "🫀",
-  emotion: "🔥",
-  activation: "⚡",
-  lien: "🔗",
-  perso: "📝"
+  corps: "Corps",
+  emotion: "Émotion",
+  activation: "Activation",
+  lien: "Lien",
+  perso: "Note"
 }
 
 window.BDR_STORAGE_KEY = "BDR_SESSION_V11"

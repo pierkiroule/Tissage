@@ -4,12 +4,14 @@
 }
 
 :root{
-  --corps:#00695C;
-  --emotion:#B71C1C;
-  --activation:#E65100;
-  --lien:#283593;
+  --corps:#38bdf8;
+  --emotion:#818cf8;
+  --activation:#4ade80;
+  --lien:#f472b6;
   --perso:#222;
-  --border:#d6d6d6;
+  --border:#d8d5ce;
+  --offwhite:#f8f5ef;
+  --card:#fffdf9;
 }
 
 html,body{
@@ -17,7 +19,7 @@ html,body{
   height:100dvh;
   overflow-x:hidden;
   overflow-y:auto;
-  background:#fff;
+  background:var(--offwhite);
   color:#000;
   font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 }
@@ -27,9 +29,9 @@ input,textarea,button{
 }
 
 button{
-  background:#fff;
-  color:#000;
-  border:2px solid #000;
+  background:var(--card);
+  color:#111;
+  border:1.5px solid #111;
   border-radius:14px;
   font-weight:900;
 }
@@ -104,7 +106,7 @@ button{
 .app-bottom-nav{
   border-top:1px solid var(--border);
   padding:8px 10px calc(8px + env(safe-area-inset-bottom));
-  background:#fff;
+  background:var(--card);
 }
 .main-tabs{
   display:flex;
@@ -116,13 +118,23 @@ button{
   min-width:0;
   padding:10px 12px;
   border-radius:12px;
-  font-size:28px;
-  line-height:1;
+  font-size:14px;
+  line-height:1.2;
+  font-weight:700;
+  border-width:2px;
 }
+.main-tab[data-tab="accueil"]{ border-color:var(--corps); color:#0f172a; }
+.main-tab[data-tab="ecouter"]{ border-color:var(--emotion); color:#0f172a; }
+.main-tab[data-tab="tisser"]{ border-color:var(--activation); color:#0f172a; }
+.main-tab[data-tab="synthetiser"]{ border-color:var(--lien); color:#0f172a; }
 .main-tab.active{
-  background:#000;
-  color:#fff;
+  color:#0b1220;
+  box-shadow:0 0 0 2px rgba(15,23,42,.08) inset;
 }
+.main-tab.active[data-tab="accueil"]{ background:color-mix(in oklab,var(--corps) 22%, white);}
+.main-tab.active[data-tab="ecouter"]{ background:color-mix(in oklab,var(--emotion) 22%, white);}
+.main-tab.active[data-tab="tisser"]{ background:color-mix(in oklab,var(--activation) 22%, white);}
+.main-tab.active[data-tab="synthetiser"]{ background:color-mix(in oklab,var(--lien) 22%, white);}
 .tab-pager{
   flex:1;
   overflow:hidden;
@@ -144,10 +156,10 @@ button{
   margin:0 auto 20px;
   max-width:680px;
   padding:20px 18px 28px;
-  background:linear-gradient(165deg,#ffffff 0%,#f7faff 52%,#eef4ff 100%);
-  border:1px solid #dfe7fb;
+  background:var(--card);
+  border:1px solid var(--border);
   border-radius:24px;
-  box-shadow:0 16px 40px rgba(15,39,78,.12);
+  box-shadow:0 12px 28px rgba(30,30,30,.08);
 }
 .home-list{
   margin:8px 0 14px;
@@ -580,9 +592,9 @@ button.done{
   position:fixed;
   top:10px;
   right:10px;
-  background:#fff;
-  color:#000;
-  border:2px solid #000;
+  background:var(--card);
+  color:#111;
+  border:1.5px solid #111;
   border-radius:999px;
   padding:6px 10px;
   font-size:13px;
@@ -654,9 +666,9 @@ button.done{
   top:48px;
   right:10px;
   z-index:999;
-  background:#fff;
-  color:#000;
-  border:2px solid #000;
+  background:var(--card);
+  color:#111;
+  border:1.5px solid #111;
   border-radius:999px;
   padding:6px 12px;
   font-size:13px;
