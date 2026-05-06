@@ -725,18 +725,13 @@ button.done{
 }
 
 
-/* Bubble emoji + label */
+/* Bubble label */
 .bubble{
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
   text-align:center;
-}
-
-.bubble-emoji{
-  font-size:26px;
-  line-height:1;
 }
 
 .bubble-label{
