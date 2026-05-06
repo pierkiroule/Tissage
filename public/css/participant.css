@@ -137,6 +137,16 @@ button{
 .p3{ animation-delay:.9s; }
 .p4{ animation-delay:1.3s; }
 .p5{ animation-delay:1.7s; }
+.logo-wordmark{
+  font-family:Inter,system-ui,sans-serif;
+  font-size:34px;
+  font-weight:700;
+  letter-spacing:-0.8px;
+  fill:#0f172a;
+  paint-order:stroke fill;
+  stroke:rgba(255,255,255,.45);
+  stroke-width:1.2px;
+}
 .hero-subtitle{
   font-size:20px !important;
   line-height:1.45 !important;
