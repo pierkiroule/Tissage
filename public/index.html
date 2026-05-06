@@ -22,6 +22,13 @@
   </section>
 
   <section id="app" class="app">
+    <div id="menuTip" class="menu-tip hidden" role="status" aria-live="polite">
+      <div class="menu-tip-card">
+        <button id="closeMenuTipBtn" class="menu-tip-close" type="button" aria-label="Fermer l'aide">✕</button>
+        <h3 id="menuTipTitle"></h3>
+        <p id="menuTipText"></p>
+      </div>
+    </div>
     <div id="tabPager" class="tab-pager">
       <section class="tab-panel active" data-tab-panel="accueil">
         <div class="card home-card">
