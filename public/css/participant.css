@@ -87,6 +87,12 @@ button{
 }
 .scan-card{
   margin:16px auto;
+  text-align:center;
+}
+.scan-card h2,
+.scan-card p,
+#qrStatus{
+  text-align:center;
 }
 .qr-steps-circle{
   position:relative;
