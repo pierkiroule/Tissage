@@ -139,6 +139,16 @@ function closeTutoModal(){
   if(modal) modal.classList.add("hidden")
 }
 
+function openTheoryModal(){
+  const modal = $("theoryModal")
+  if(modal) modal.classList.remove("hidden")
+}
+
+function closeTheoryModal(){
+  const modal = $("theoryModal")
+  if(modal) modal.classList.add("hidden")
+}
+
 function markQrStepProgress(step, action, data = {}){
   if(activeQrStep !== null){
     const unlocked = new Set(window.BDR.session.unlockedQrSteps || [])
@@ -356,9 +366,14 @@ function bindUI(){
     btn.onclick = () => switchMainTab(btn.dataset.tab)
   })
   $("openTutoBtn").onclick = openTutoModal
+  $("openTheoryModalBtn").onclick = openTheoryModal
   $("closeTutoModalBtn").onclick = closeTutoModal
   $("tutoModal").onclick = e => {
     if(e.target.id === "tutoModal") closeTutoModal()
+  }
+  $("closeTheoryModalBtn").onclick = closeTheoryModal
+  $("theoryModal").onclick = e => {
+    if(e.target.id === "theoryModal") closeTheoryModal()
   }
 
   const input = $("noteInput")

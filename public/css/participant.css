@@ -1758,3 +1758,13 @@ button.done{
 @media (max-width:520px){
   .summary-analysis-grid{ grid-template-columns:1fr; }
 }
+
+
+.theory-modal-body ul{
+  margin:0;
+  padding-left:20px;
+  line-height:1.45;
+}
+.theory-modal-body li{
+  margin-bottom:4px;
+}

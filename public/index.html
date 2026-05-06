@@ -18,8 +18,34 @@
       <input id="pseudoInput" placeholder="Votre pseudo" />
 
       <button id="startBtn">Commencer</button>
+      <p><button id="openTheoryModalBtn" class="tuto-link" type="button">Ancrage theorique et methodologique</button></p>
     </div>
   </section>
+
+
+
+  <div id="theoryModal" class="tuto-modal hidden" role="dialog" aria-modal="true" aria-labelledby="theoryModalTitle">
+    <div class="tuto-modal-card">
+      <button id="closeTheoryModalBtn" class="tuto-modal-close" type="button" aria-label="Fermer l'ancrage théorique et méthodologique">✕</button>
+      <h3 id="theoryModalTitle">Ancrage théorique et méthodologique</h3>
+      <div class="tuto-modal-body theory-modal-body">
+        <p>L’Écho-évaluation est un dispositif expérimental de cartographie sensible du vécu. Contrairement aux approches classiques d'auto-évaluation centrées sur le score ou la mesure, elle cherche à rendre perceptibles des dynamiques de résonance, de relation et de transformation au fil d'une expérience.</p>
+        <p>Le dispositif repose sur :</p>
+        <ul>
+          <li>un lexique expérientiel structuré,</li>
+          <li>des associations de mots,</li>
+          <li>des liens entre éléments,</li>
+          <li>des notes réflexives,</li>
+          <li>une spatialisation interactive du vécu.</li>
+        </ul>
+        <p>L’approche s’inspire de la phénoménologie et considère l’expérience comme située, incarnée et relationnelle. Elle mobilise également la théorie de la résonance d’Hartmut Rosa, en explorant ce qui touche, mobilise, relie ou transforme la personne dans une situation donnée.</p>
+        <p>Le dispositif s’ancre aussi dans la théorie de l’acteur-réseau de Bruno Latour : l’expérience y est comprise comme un réseau dynamique d’interactions entre humains, mots, sons, objets, corps, environnements et dispositifs techniques.</p>
+        <p>L’outil est également inspiré des recherches sur l’écoute, les paysages sonores et l’écologie acoustique menées notamment par R. Murray Schafer et Barry Truax.</p>
+        <p>Le lexique utilisé s’appuie sur des dimensions fréquemment étudiées dans les recherches sur les émotions, l’expérience utilisateur, la perception sonore et les approches qualitatives du vécu.</p>
+        <p>L’Écho-évaluation ne constitue ni un test psychométrique ni un outil diagnostique. Elle doit être comprise comme un support de médiation, de réflexivité et d’exploration expérientielle.</p>
+      </div>
+    </div>
+  </div>
 
   <section id="app" class="app">
     <div id="tutoModal" class="tuto-modal hidden" role="dialog" aria-modal="true" aria-labelledby="tutoModalTitle">
