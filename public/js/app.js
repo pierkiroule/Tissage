@@ -499,27 +499,47 @@ function buildCategoryTimelineData(session){
   const nodes = Array.isArray(session?.active) ? session.active : []
   if(!events.length || !nodes.length) return { categories: [], frames: [] }
 
-  const nodeTypeByLabel = new Map()
+  const nodeFamilyByLabel = new Map()
   nodes.forEach(n => {
     if(!n?.label) return
-    nodeTypeByLabel.set(n.label, n.type || "Autres")
+    nodeFamilyByLabel.set(n.label, n.family || "autres")
   })
 
-  const cumulative = {}
+  const activeByLabel = {}
+  const activeFamilyCount = {}
   const categoriesSet = new Set()
   const frames = []
 
   events.forEach((event, i) => {
-    const label = event?.label || event?.source || event?.target
-    if(!label) return
-    const type = nodeTypeByLabel.get(label) || "Autres"
-    cumulative[type] = (cumulative[type] || 0) + 1
-    categoriesSet.add(type)
+    const label = event?.label
+    const family = event?.family || (label ? nodeFamilyByLabel.get(label) : "") || "autres"
 
-    const total = Object.values(cumulative).reduce((sum, count) => sum + count, 0)
+    if(event?.type === "word_on" && label){
+      if(!activeByLabel[label]){
+        activeByLabel[label] = family
+        activeFamilyCount[family] = (activeFamilyCount[family] || 0) + 1
+      }
+    } else if(event?.type === "word_off" && label){
+      const existingFamily = activeByLabel[label]
+      if(existingFamily){
+        activeFamilyCount[existingFamily] = Math.max(0, (activeFamilyCount[existingFamily] || 0) - 1)
+        delete activeByLabel[label]
+      }
+    } else if(event?.type === "note_add" && label){
+      if(!activeByLabel[label]){
+        activeByLabel[label] = "perso"
+        activeFamilyCount.perso = (activeFamilyCount.perso || 0) + 1
+      }
+    }
+
+    Object.keys(activeFamilyCount).forEach(cat => {
+      if(activeFamilyCount[cat] > 0) categoriesSet.add(cat)
+    })
+
+    const total = Object.values(activeFamilyCount).reduce((sum, count) => sum + count, 0)
     const proportions = {}
     categoriesSet.forEach(cat => {
-      proportions[cat] = total ? ((cumulative[cat] || 0) / total) : 0
+      proportions[cat] = total ? ((activeFamilyCount[cat] || 0) / total) : 0
     })
 
     frames.push({
@@ -529,7 +549,12 @@ function buildCategoryTimelineData(session){
     })
   })
 
-  return { categories: Array.from(categoriesSet), frames }
+  const categories = Array.from(categoriesSet)
+  const prettified = categories.map(cat => ({
+    key: cat,
+    label: window.BDR_LABELS?.[cat] || cat
+  }))
+  return { categories: prettified, frames }
 }
 
 function renderCategoryTimelineFrame(data, frameIndex){
@@ -540,12 +565,12 @@ function renderCategoryTimelineFrame(data, frameIndex){
   const safeIndex = Math.max(0, Math.min(frameIndex, data.frames.length - 1))
   const frame = data.frames[safeIndex]
   const sorted = data.categories
-    .map(cat => ({ cat, proportion: frame.proportions[cat] || 0 }))
+    .map(cat => ({ ...cat, proportion: frame.proportions[cat.key] || 0 }))
     .sort((a,b) => b.proportion - a.proportion)
 
   barsHost.innerHTML = sorted.map(item => `
     <div class="category-timeline-row">
-      <span>${escapeHtml(item.cat)}</span>
+      <span>${escapeHtml(item.label)}</span>
       <div class="category-timeline-track">
         <div class="category-timeline-fill" style="width:${(item.proportion * 100).toFixed(1)}%"></div>
       </div>
@@ -555,7 +580,7 @@ function renderCategoryTimelineFrame(data, frameIndex){
 
   const leader = sorted[0]
   infoHost.textContent = leader
-    ? `${frame.elapsedLabel} · dominante: ${leader.cat} (${(leader.proportion * 100).toFixed(0)}%)`
+    ? `${frame.elapsedLabel} · dominante: ${leader.label} (${(leader.proportion * 100).toFixed(0)}%)`
     : frame.elapsedLabel
 }
 
