@@ -22,11 +22,16 @@
   </section>
 
   <section id="app" class="app">
-    <div id="menuTip" class="menu-tip hidden" role="status" aria-live="polite">
-      <div class="menu-tip-card">
-        <button id="closeMenuTipBtn" class="menu-tip-close" type="button" aria-label="Fermer l'aide">✕</button>
-        <h3 id="menuTipTitle"></h3>
-        <p id="menuTipText"></p>
+    <div id="tutoModal" class="tuto-modal hidden" role="dialog" aria-modal="true" aria-labelledby="tutoModalTitle">
+      <div class="tuto-modal-card">
+        <button id="closeTutoModalBtn" class="tuto-modal-close" type="button" aria-label="Fermer le tuto">✕</button>
+        <h3 id="tutoModalTitle">Tuto•°</h3>
+        <div class="tuto-modal-body">
+          <p><strong>Accueil :</strong> Ici, vous voyez le principe.</p>
+          <p><strong>🎧 Écouter :</strong> Touchez un numéro, puis le titre au centre pour ouvrir la fiche de l'étape.</p>
+          <p><strong>🕸️ Tisser :</strong> Activez des mots, puis faites se toucher 2 bulles pour créer ou retirer un lien.</p>
+          <p><strong>📄 Synthèse :</strong> Lisez votre carte, puis ajoutez votre commentaire final.</p>
+        </div>
       </div>
     </div>
     <div id="tabPager" class="tab-pager">
@@ -84,7 +89,8 @@
           </div>
           <p class="hero-subtitle">Un outil pour cueillir et tisser ce qui se vit dans le nid de votre experience sonore singulière.</p>
           <p><strong>Comment participer :</strong> activez des mots, déplacez vos nœuds, puis créez des liens pour composer votre carte sensible.</p>
-          <ul class="home-list">
+                    <p><button id="openTutoBtn" class="tuto-link" type="button">Tuto•°</button></p>
+<ul class="home-list">
             <li><strong>Lier :</strong> faites se toucher deux bulles du réseau pour créer un lien.</li>
             <li><strong>Délier :</strong> faites se retoucher les deux mêmes bulles pour retirer le lien.</li>
             <li><strong>Retirer un mot :</strong> touchez à nouveau son bouton, la bulle et ses liens disparaissent.</li>
