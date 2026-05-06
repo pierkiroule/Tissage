@@ -586,8 +586,8 @@ function renderCategoryTimelineFrame(data, frameIndex){
 
 function initCategoryTimeline(data){
   if(!data.frames.length) return
-  const playBtn = document.getElementById("categoryTimelinePlay")
-  const stopBtn = document.getElementById("categoryTimelineStop")
+  const slider = document.getElementById("categoryTimelineSlider")
+  const timeLabel = document.getElementById("categoryTimelineTime")
   let frameIndex = 0
   let timer = null
 
@@ -598,25 +598,41 @@ function initCategoryTimeline(data){
     }
   }
 
-  const play = () => {
-    stop()
-    timer = setInterval(() => {
-      frameIndex += 1
-      if(frameIndex >= data.frames.length){
-        frameIndex = data.frames.length - 1
-        stop()
-      }
-      renderCategoryTimelineFrame(data, frameIndex)
-    }, 220)
+  const updateUI = () => {
+    renderCategoryTimelineFrame(data, frameIndex)
+    if(slider) slider.value = String(frameIndex)
+    if(timeLabel){
+      const current = data.frames[frameIndex]
+      timeLabel.textContent = `Horodatage : ${current?.elapsedLabel || "00:00:00"}`
+    }
   }
 
-  renderCategoryTimelineFrame(data, frameIndex)
-  if(playBtn) playBtn.onclick = play
-  if(stopBtn) stopBtn.onclick = () => {
-    stop()
-    frameIndex = 0
-    renderCategoryTimelineFrame(data, frameIndex)
+  if(slider){
+    slider.min = "0"
+    slider.max = String(Math.max(0, data.frames.length - 1))
+    slider.step = "1"
+    slider.value = "0"
+    slider.oninput = e => {
+      stop()
+      frameIndex = Number(e.target.value || 0)
+      updateUI()
+    }
   }
+
+  updateUI()
+
+  timer = setInterval(() => {
+    frameIndex += 1
+    if(frameIndex >= data.frames.length){
+      frameIndex = data.frames.length - 1
+      stop()
+    }
+    updateUI()
+  }, 220)
+
+  window.addEventListener("beforeunload", () => {
+    stop()
+  }, { once:true })
 }
 
 function renderInlineSummary(){
@@ -665,11 +681,11 @@ function renderInlineSummary(){
         <h3>Répartition des catégories (animation)</h3>
         <p class="muted">Une lecture simple de l'évolution des catégories de mots au fil de votre parcours.</p>
         <div id="categoryTimelineBars" class="category-timeline-bars"></div>
+        <label for="categoryTimelineSlider" class="category-timeline-time-wrap">
+          <span id="categoryTimelineTime" class="category-timeline-time">Horodatage : 00:00:00</span>
+        </label>
+        <input id="categoryTimelineSlider" class="category-timeline-slider" type="range" min="0" max="0" value="0" step="1">
         <p id="categoryTimelineInfo" class="category-timeline-info muted"></p>
-        <div class="category-timeline-actions">
-          <button id="categoryTimelinePlay" type="button">▶️ Lancer</button>
-          <button id="categoryTimelineStop" type="button">⏹️ Revenir au début</button>
-        </div>
       </section>
 
       <section class="summary-minimal-card">

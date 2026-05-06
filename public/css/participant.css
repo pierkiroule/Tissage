@@ -1802,9 +1802,18 @@ button.done{
   margin:10px 0 0;
 }
 
-.category-timeline-actions{
-  display:flex;
-  gap:8px;
-  margin-top:8px;
-  flex-wrap:wrap;
+.category-timeline-time-wrap{
+  display:block;
+  margin-top:10px;
+}
+
+.category-timeline-time{
+  font-size:13px;
+  font-weight:600;
+  color:#334155;
+}
+
+.category-timeline-slider{
+  width:100%;
+  margin-top:6px;
 }
