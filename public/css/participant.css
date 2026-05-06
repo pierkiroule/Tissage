@@ -298,9 +298,6 @@ button{
   gap:8px;
   margin:8px 0;
 }
-#qrFileInput{
-  display:none;
-}
 .synthese-panel{
   padding:16px;
   gap:10px;
@@ -317,13 +314,12 @@ button{
 .qr-modal.hidden{ display:none; }
 .qr-modal-card{
   background:#fff;
-  width:min(920px,94vw);
-  height:min(85vh,720px);
+  width:min(720px,94vw);
+  max-height:min(85vh,760px);
   border-radius:16px;
   display:flex;
   flex-direction:column;
   overflow:hidden;
-  padding:0 10px 10px;
 }
 .qr-modal-head{
   display:flex;
@@ -332,10 +328,41 @@ button{
   padding:10px 12px;
   border-bottom:1px solid var(--border);
 }
-#qrIframe{
-  border:none;
+.qr-modal-body{
+  padding:12px;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.qr-template-block{
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:10px 12px;
+}
+.qr-template-block h4{
+  margin:0 0 8px;
+}
+.qr-template-block p{
+  margin:4px 0;
+}
+.qr-media-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:10px;
+}
+.qr-media-actions button{
+  width:auto;
+  margin-top:0;
+  padding:10px 12px;
+}
+.qr-modal-footer{
+  border-top:1px solid var(--border);
+  padding:10px 12px 12px;
+}
+#goToTissageBtn{
   width:100%;
-  flex:1;
 }
 
 .summary{

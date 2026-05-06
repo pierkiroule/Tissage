@@ -24,6 +24,17 @@ const MENU_TIPS = {
     text: "Lisez ce que votre carte raconte. Regardez les liens, les mots forts et les tendances. Ensuite, ajoutez votre avis personnel en commentaire final pour enrichir la synthèse."
   }
 }
+const QR_STEP_TEMPLATE = {
+  title: "Titre 1",
+  subtitle: "Sous-titre 1",
+  objectif: "Décrire ici l’objectif de l’étape.",
+  consigne: "Décrire ici la consigne à suivre.",
+  media: {
+    qrCode: "QR code à scanner",
+    url: "https://example.org",
+    appFile: "fichier-interne-exemple.mp3"
+  }
+}
 
 function showScreen(id){
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"))
@@ -101,10 +112,10 @@ function openQrStep(step){
   activeQrStep = step
   const modal = $("qrModal")
   const title = $("qrModalTitle")
-  const iframe = $("qrIframe")
-  if(title) title.textContent = `Étape ${step} · Scanner un QR code`
-  if(iframe) iframe.src = "about:blank"
+  if(title) title.textContent = `Étape ${step} · Mon parcours d’écoute sensible`
+  renderQrStepModal(step)
   if(modal) modal.classList.remove("hidden")
+  markQrStepProgress(step, "opened")
 }
 
 function renderMainTabs(){
@@ -143,51 +154,60 @@ function showMenuTip(tab){
   tipTimeout = setTimeout(() => closeMenuTip(), 5000)
 }
 
-async function scanQrFromFile(){
-  const input = $("qrFileInput")
-  const status = $("qrStatus")
-  if(!input || !input.files?.length) return
-  if(!("BarcodeDetector" in window)){
-    status.textContent = "Scanner non supporté ici. Collez l’URL manuellement."
-    return
-  }
-  const detector = new BarcodeDetector({ formats: ["qr_code"] })
-  const bitmap = await createImageBitmap(input.files[0])
-  const codes = await detector.detect(bitmap)
-  if(!codes.length || !codes[0].rawValue){
-    status.textContent = "QR non reconnu."
-    return
-  }
-  openScannedPage(codes[0].rawValue)
-  status.textContent = "QR détecté."
-}
-
-function openScannedPage(url){
-  const safe = (url || "").trim()
-  if(!/^https?:\/\//i.test(safe)){
-    alert("URL invalide. Utilisez une URL commençant par http:// ou https://")
-    return
-  }
-  const modal = $("qrModal")
-  const iframe = $("qrIframe")
-  iframe.src = safe
-  modal.classList.remove("hidden")
-
+function markQrStepProgress(step, action, data = {}){
   if(activeQrStep !== null){
     const unlocked = new Set(window.BDR.session.unlockedQrSteps || [])
-    unlocked.add(activeQrStep)
+    unlocked.add(step)
     window.BDR.session.unlockedQrSteps = Array.from(unlocked).sort((a,b) => a - b)
-    logEvent("qr_step_unlocked", { step: activeQrStep, url: safe })
+    if(!window.BDR.session.qrProgress) window.BDR.session.qrProgress = []
+    window.BDR.session.qrProgress.push({
+      step,
+      action,
+      at: new Date().toISOString(),
+      ...data
+    })
+    logEvent("qr_step_progress", { step, action, ...data })
     saveSession()
     renderQrSteps()
   }
 }
 
+function renderQrStepModal(step){
+  const host = $("qrModalBody")
+  if(!host) return
+  host.innerHTML = `
+    <section class="qr-template-block">
+      <h4>${escapeHtml(QR_STEP_TEMPLATE.title)} — ${step}</h4>
+      <p><strong>Sous-titre :</strong> ${escapeHtml(QR_STEP_TEMPLATE.subtitle)}</p>
+      <p><strong>Objectif :</strong> ${escapeHtml(QR_STEP_TEMPLATE.objectif)}</p>
+      <p><strong>Consigne :</strong> ${escapeHtml(QR_STEP_TEMPLATE.consigne)}</p>
+    </section>
+    <section class="qr-template-block">
+      <h4>Média à ouvrir</h4>
+      <div class="qr-media-actions">
+        <button type="button" onclick="openQrMedia('qr_code')">${escapeHtml(QR_STEP_TEMPLATE.media.qrCode)}</button>
+        <button type="button" onclick="openQrMedia('url')">Lien URL</button>
+        <button type="button" onclick="openQrMedia('app_file')">Fichier interne</button>
+      </div>
+      <p id="qrMediaStatus" class="note"></p>
+    </section>
+  `
+}
+
+function openQrMedia(type){
+  const status = $("qrMediaStatus")
+  if(!status || activeQrStep === null) return
+  if(type === "url"){
+    window.open(QR_STEP_TEMPLATE.media.url, "_blank", "noopener,noreferrer")
+  }
+  status.textContent = `Média sélectionné : ${type}.`
+  markQrStepProgress(activeQrStep, "media_opened", { mediaType: type })
+}
+
 function closeQrModal(){
   const modal = $("qrModal")
-  const iframe = $("qrIframe")
-  if(iframe) iframe.src = "about:blank"
   if(modal) modal.classList.add("hidden")
+  if(activeQrStep !== null) markQrStepProgress(activeQrStep, "closed")
   activeQrStep = null
 }
 
@@ -333,10 +353,12 @@ function backToSession(){
 function bindUI(){
   $("startBtn").onclick = startSession
   $("noteBtn").onclick = addNote
-  $("scanQrBtn").onclick = () => $("qrFileInput").click()
-  $("qrFileInput").onchange = scanQrFromFile
-  $("openManualUrlBtn").onclick = () => openScannedPage($("manualUrlInput").value)
   $("closeQrModalBtn").onclick = closeQrModal
+  $("goToTissageBtn").onclick = () => {
+    if(activeQrStep !== null) markQrStepProgress(activeQrStep, "go_to_tissage")
+    switchMainTab("tisser")
+    closeQrModal()
+  }
   $("qrModal").onclick = e => {
     if(e.target.id === "qrModal") closeQrModal()
   }
