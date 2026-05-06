@@ -509,6 +509,16 @@ function toggleReplayPlayback(target){
 
   if(replayState[target]) return stopReplayPlayback(target)
 
+  if(target === 'inline') {
+    const idx = Number(window.BDR.session.inlineReplayIndex || 0)
+    if(idx >= events.length - 1) window.BDR.session.inlineReplayIndex = 0
+    drawReplay(Number(window.BDR.session.inlineReplayIndex || 0))
+  } else {
+    const idx = Number(window.BDR.session.modalReplayIndex || 0)
+    if(idx >= events.length - 1) window.BDR.session.modalReplayIndex = 0
+    drawReplayModal(Number(window.BDR.session.modalReplayIndex || 0))
+  }
+
   replayState[target] = setInterval(() => {
     if(target === 'inline'){
       const idx = Number(window.BDR.session.inlineReplayIndex || 0)
@@ -649,11 +659,16 @@ function openReplayModal(){
     modal.addEventListener("click", e => {
       if(e.target.id === "replayModal") closeReplayModal()
     })
+    document.addEventListener("fullscreenchange", () => {
+      if(!modal.classList.contains("visible")) return
+      const idx = Number(window.BDR.session?.modalReplayIndex || 0)
+      requestAnimationFrame(() => drawReplayModal(idx))
+    })
   }
 
   const events = window.BDR.session?.events || []
-  const startIndex = Math.max(events.length - 1, 0)
-  window.BDR.session.modalReplayIndex = startIndex
+  const startIndex = Math.max(0, Number(window.BDR.session.modalReplayIndex || 0))
+  window.BDR.session.modalReplayIndex = Math.min(startIndex, Math.max(events.length - 1, 0))
 
   const playPause = document.getElementById('replayModalPlayPause')
   if(playPause) playPause.onclick = () => toggleReplayPlayback('modal')
@@ -663,16 +678,22 @@ function openReplayModal(){
     fsBtn.onclick = async () => {
       const card = modal.querySelector('.replay-modal-card')
       if(!card) return
-      if(document.fullscreenElement){
-        await document.exitFullscreen()
-      } else if(card.requestFullscreen){
-        await card.requestFullscreen()
+      try {
+        if(document.fullscreenElement){
+          await document.exitFullscreen()
+        } else if(card.requestFullscreen){
+          await card.requestFullscreen()
+        }
+        const idx = Number(window.BDR.session.modalReplayIndex || 0)
+        requestAnimationFrame(() => drawReplayModal(idx))
+      } catch(err){
+        console.warn('Fullscreen indisponible', err)
       }
     }
   }
 
   modal.classList.add("visible")
-  drawReplayModal(startIndex)
+  drawReplayModal(Number(window.BDR.session.modalReplayIndex || 0))
   updateReplayButtons()
 }
 
