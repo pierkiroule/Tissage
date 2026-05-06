@@ -100,23 +100,23 @@ button{
 .qr-step{
   position:absolute;
   transform:translate(-50%,-50%);
-  width:62px;
-  height:62px;
-  border-radius:999px;
-  border:3px solid #1a1a1a;
+  width:48px;
+  height:48px;
+  border:none;
+  background:transparent;
   display:flex;
   align-items:center;
   justify-content:center;
   font-size:26px;
   font-weight:800;
-  box-shadow:0 6px 12px rgba(0,0,0,.18);
+  box-shadow:none;
+  padding:0;
 }
 .qr-step.locked{
-  background:#fff;
   color:#111;
 }
 .qr-step.unlocked{
-  background:#fff7c8;
+  color:#111;
 }
 .qr-step-number{
   width:36px;
