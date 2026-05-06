@@ -449,9 +449,11 @@ function renderInlineSummary(){
 
       <section class="summary-minimal-card">
         <h3>Replay du réseau</h3>
-        <input id="replaySlider" type="range" min="0" max="${Math.max(events.length - 1, 0)}" value="${replayIndex}" step="1" aria-label="Défilement du replay">
+        <div class="replay-controls">
+          <button id="replayPlayPause" type="button" class="ghost" aria-label="Lecture du replay">▶️ Lire</button>
+          <button type="button" class="ghost" onclick="openReplayModal()">Plein écran</button>
+        </div>
         <p id="replayInfo">${replayEvent ? `${escapeHtml(replayEvent.elapsedLabel || '—')} · ${escapeHtml(replayEvent.type || 'événement')}` : 'Aucun événement enregistré.'}</p>
-        <button type="button" class="ghost" onclick="openReplayModal()">Ouvrir le replay en plein écran</button>
       </section>
 
       <section class="summary-minimal-card">
@@ -471,18 +473,10 @@ function renderInlineSummary(){
     </section>
   `
 
-  const slider = document.getElementById('replaySlider')
-  const replayInfo = document.getElementById('replayInfo')
-  if(slider && replayInfo){
-    slider.oninput = () => {
-      const idx = Number(slider.value)
-      s.inlineReplayIndex = idx
-      saveSession()
-      const evt = events[idx]
-      replayInfo.textContent = evt
-        ? `${evt.elapsedLabel || '—'} · ${evt.type || 'événement'}`
-        : 'Aucun événement enregistré.'
-    }
+  const replayPlayPause = document.getElementById('replayPlayPause')
+  if(replayPlayPause){
+    replayPlayPause.onclick = () => toggleReplayPlayback('inline')
+    updateReplayButtons()
   }
 
   const commentForm = document.getElementById('syntheseCommentForm')
@@ -499,12 +493,62 @@ function renderInlineSummary(){
 }
 
 
-function initReplay(){
-  const slider = document.getElementById("replaySlider")
-  if(!slider) return
+const replayState = { inline: null, modal: null }
 
-  slider.oninput = () => drawReplay(Number(slider.value))
-  drawReplay(Number(slider.value))
+function stopReplayPlayback(target){
+  if(replayState[target]){
+    clearInterval(replayState[target])
+    replayState[target] = null
+  }
+  updateReplayButtons()
+}
+
+function toggleReplayPlayback(target){
+  const events = window.BDR.session?.events || []
+  if(events.length < 2) return
+
+  if(replayState[target]) return stopReplayPlayback(target)
+
+  if(target === 'inline') {
+    const idx = Number(window.BDR.session.inlineReplayIndex || 0)
+    if(idx >= events.length - 1) window.BDR.session.inlineReplayIndex = 0
+    drawReplay(Number(window.BDR.session.inlineReplayIndex || 0))
+  } else {
+    const idx = Number(window.BDR.session.modalReplayIndex || 0)
+    if(idx >= events.length - 1) window.BDR.session.modalReplayIndex = 0
+    drawReplayModal(Number(window.BDR.session.modalReplayIndex || 0))
+  }
+
+  replayState[target] = setInterval(() => {
+    if(target === 'inline'){
+      const idx = Number(window.BDR.session.inlineReplayIndex || 0)
+      const next = idx + 1
+      if(next >= events.length){ stopReplayPlayback(target); return }
+      window.BDR.session.inlineReplayIndex = next
+      drawReplay(next)
+      saveSession()
+    } else {
+      const idx = Number(window.BDR.session.modalReplayIndex || 0)
+      const next = idx + 1
+      if(next >= events.length){ stopReplayPlayback(target); return }
+      window.BDR.session.modalReplayIndex = next
+      drawReplayModal(next)
+    }
+  }, 950)
+  updateReplayButtons()
+}
+
+function updateReplayButtons(){
+  const inlineBtn = document.getElementById('replayPlayPause')
+  if(inlineBtn) inlineBtn.textContent = replayState.inline ? '⏸️ Pause' : '▶️ Lire'
+  const modalBtn = document.getElementById('replayModalPlayPause')
+  if(modalBtn) modalBtn.textContent = replayState.modal ? '⏸️ Pause' : '▶️ Lire'
+}
+
+function initReplay(){
+  const idx = Number(window.BDR.session?.inlineReplayIndex || 0)
+  drawReplay(idx)
+  updateReplayButtons()
 }
 
 function drawReplay(index){
@@ -602,7 +646,10 @@ function openReplayModal(){
         </div>
 
         <canvas id="replayModalCanvas"></canvas>
-        <input id="replayModalSlider" type="range" min="0" value="0">
+        <div class="replay-controls">
+          <button id="replayModalPlayPause" type="button" class="ghost">▶️ Lire</button>
+          <button id="replayModalFullscreen" type="button" class="ghost">⛶ Plein écran natif</button>
+        </div>
         <div id="replayModalInfo">—</div>
       </div>
     `
@@ -612,19 +659,46 @@ function openReplayModal(){
     modal.addEventListener("click", e => {
       if(e.target.id === "replayModal") closeReplayModal()
     })
+    document.addEventListener("fullscreenchange", () => {
+      if(!modal.classList.contains("visible")) return
+      const idx = Number(window.BDR.session?.modalReplayIndex || 0)
+      requestAnimationFrame(() => drawReplayModal(idx))
+    })
   }
 
   const events = window.BDR.session?.events || []
-  const slider = document.getElementById("replayModalSlider")
-  slider.max = Math.max(events.length - 1, 0)
-  slider.value = Math.max(events.length - 1, 0)
-  slider.oninput = () => drawReplayModal(Number(slider.value))
+  const startIndex = Math.max(0, Number(window.BDR.session.modalReplayIndex || 0))
+  window.BDR.session.modalReplayIndex = Math.min(startIndex, Math.max(events.length - 1, 0))
+
+  const playPause = document.getElementById('replayModalPlayPause')
+  if(playPause) playPause.onclick = () => toggleReplayPlayback('modal')
+
+  const fsBtn = document.getElementById('replayModalFullscreen')
+  if(fsBtn){
+    fsBtn.onclick = async () => {
+      const card = modal.querySelector('.replay-modal-card')
+      if(!card) return
+      try {
+        if(document.fullscreenElement){
+          await document.exitFullscreen()
+        } else if(card.requestFullscreen){
+          await card.requestFullscreen()
+        }
+        const idx = Number(window.BDR.session.modalReplayIndex || 0)
+        requestAnimationFrame(() => drawReplayModal(idx))
+      } catch(err){
+        console.warn('Fullscreen indisponible', err)
+      }
+    }
+  }
 
   modal.classList.add("visible")
-  drawReplayModal(Number(slider.value))
+  drawReplayModal(Number(window.BDR.session.modalReplayIndex || 0))
+  updateReplayButtons()
 }
 
 function closeReplayModal(){
+  stopReplayPlayback('modal')
   const modal = document.getElementById("replayModal")
   if(modal) modal.classList.remove("visible")
 }
