@@ -73,7 +73,7 @@ function renderQrSteps(){
         style="left:${x}%;top:${y}%;"
         onclick="openQrStep(${step})"
         aria-label="Étape ${step}"
-      >${isUnlocked ? "👂" : step}</button>
+      >${isUnlocked ? "👂" : `<span class="qr-step-number">${step}</span>`}</button>
     `
   }).join("")
 }
