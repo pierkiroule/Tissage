@@ -494,6 +494,106 @@ function buildSyntheseInsights(session){
   }
 }
 
+function buildCategoryTimelineData(session){
+  const events = Array.isArray(session?.events) ? session.events : []
+  const nodes = Array.isArray(session?.active) ? session.active : []
+  if(!events.length || !nodes.length) return { categories: [], frames: [] }
+
+  const nodeTypeByLabel = new Map()
+  nodes.forEach(n => {
+    if(!n?.label) return
+    nodeTypeByLabel.set(n.label, n.type || "Autres")
+  })
+
+  const cumulative = {}
+  const categoriesSet = new Set()
+  const frames = []
+
+  events.forEach((event, i) => {
+    const label = event?.label || event?.source || event?.target
+    if(!label) return
+    const type = nodeTypeByLabel.get(label) || "Autres"
+    cumulative[type] = (cumulative[type] || 0) + 1
+    categoriesSet.add(type)
+
+    const total = Object.values(cumulative).reduce((sum, count) => sum + count, 0)
+    const proportions = {}
+    categoriesSet.forEach(cat => {
+      proportions[cat] = total ? ((cumulative[cat] || 0) / total) : 0
+    })
+
+    frames.push({
+      index: i,
+      elapsedLabel: event?.elapsedLabel || formatElapsed(Number(event?.elapsedMs || 0)),
+      proportions
+    })
+  })
+
+  return { categories: Array.from(categoriesSet), frames }
+}
+
+function renderCategoryTimelineFrame(data, frameIndex){
+  const barsHost = document.getElementById("categoryTimelineBars")
+  const infoHost = document.getElementById("categoryTimelineInfo")
+  if(!barsHost || !infoHost || !data.frames.length) return
+
+  const safeIndex = Math.max(0, Math.min(frameIndex, data.frames.length - 1))
+  const frame = data.frames[safeIndex]
+  const sorted = data.categories
+    .map(cat => ({ cat, proportion: frame.proportions[cat] || 0 }))
+    .sort((a,b) => b.proportion - a.proportion)
+
+  barsHost.innerHTML = sorted.map(item => `
+    <div class="category-timeline-row">
+      <span>${escapeHtml(item.cat)}</span>
+      <div class="category-timeline-track">
+        <div class="category-timeline-fill" style="width:${(item.proportion * 100).toFixed(1)}%"></div>
+      </div>
+      <b>${(item.proportion * 100).toFixed(0)}%</b>
+    </div>
+  `).join("")
+
+  const leader = sorted[0]
+  infoHost.textContent = leader
+    ? `${frame.elapsedLabel} · dominante: ${leader.cat} (${(leader.proportion * 100).toFixed(0)}%)`
+    : frame.elapsedLabel
+}
+
+function initCategoryTimeline(data){
+  if(!data.frames.length) return
+  const playBtn = document.getElementById("categoryTimelinePlay")
+  const stopBtn = document.getElementById("categoryTimelineStop")
+  let frameIndex = 0
+  let timer = null
+
+  const stop = () => {
+    if(timer){
+      clearInterval(timer)
+      timer = null
+    }
+  }
+
+  const play = () => {
+    stop()
+    timer = setInterval(() => {
+      frameIndex += 1
+      if(frameIndex >= data.frames.length){
+        frameIndex = data.frames.length - 1
+        stop()
+      }
+      renderCategoryTimelineFrame(data, frameIndex)
+    }, 220)
+  }
+
+  renderCategoryTimelineFrame(data, frameIndex)
+  if(playBtn) playBtn.onclick = play
+  if(stopBtn) stopBtn.onclick = () => {
+    stop()
+    frameIndex = 0
+    renderCategoryTimelineFrame(data, frameIndex)
+  }
+}
+
 function renderInlineSummary(){
   const host = $("syntheseInline")
   if(!host || !window.BDR?.session) return
@@ -537,6 +637,17 @@ function renderInlineSummary(){
       </section>
 
       <section class="summary-minimal-card">
+        <h3>Répartition des catégories (animation)</h3>
+        <p class="muted">Une lecture simple de l'évolution des catégories de mots au fil de votre parcours.</p>
+        <div id="categoryTimelineBars" class="category-timeline-bars"></div>
+        <p id="categoryTimelineInfo" class="category-timeline-info muted"></p>
+        <div class="category-timeline-actions">
+          <button id="categoryTimelinePlay" type="button">▶️ Lancer</button>
+          <button id="categoryTimelineStop" type="button">⏹️ Revenir au début</button>
+        </div>
+      </section>
+
+      <section class="summary-minimal-card">
         <h3>Votre commentaire sur cette synthèse</h3>
         <p class="muted">Déposer votre commentaire sur cette synthèse de votre expérience. Que vous apprend cette expérience d’écoute ?</p>
         <form id="syntheseCommentForm" class="summary-comment-form">
@@ -564,6 +675,9 @@ function renderInlineSummary(){
       renderInlineSummary()
     }
   }
+
+  const categoryTimelineData = buildCategoryTimelineData(s)
+  initCategoryTimeline(categoryTimelineData)
 }
 
 
