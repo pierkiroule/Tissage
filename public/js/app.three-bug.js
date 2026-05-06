@@ -182,7 +182,7 @@ function renderChips(){
     const on = window.BDR.session.active.some(x => x.label === label)
     return `
       <button class="chip ${openFamily} ${on ? "used" : ""}" onclick="toggleWord('${openFamily}','${label}')">
-        ${getEmoji(label, openFamily)} ${escapeHtml(label)}
+        ${escapeHtml(label)}
       </button>
     `
   }).join("")
@@ -566,8 +566,6 @@ function drawReplay(index){
   visibleNodes.forEach(n => {
     const x = n.x * scaleX
     const y = n.y * scaleY
-    const emoji = typeof getEmoji === "function" ? getEmoji(n.label, n.family) : "•"
-
     ctx.beginPath()
     ctx.arc(x, y, 18, 0, Math.PI*2)
     ctx.fillStyle = "#fff"
@@ -576,10 +574,6 @@ function drawReplay(index){
     ctx.lineWidth = 2
     ctx.stroke()
 
-    ctx.font = "20px system-ui"
-    ctx.textAlign = "center"
-    ctx.textBaseline = "middle"
-    ctx.fillText(emoji, x, y)
   })
 
   const label = event
@@ -685,8 +679,6 @@ function drawReplayModal(index){
   visibleNodes.forEach(n => {
     const x = n.x * scaleX
     const y = n.y * scaleY
-    const emoji = typeof getEmoji === "function" ? getEmoji(n.label, n.family) : "•"
-
     ctx.beginPath()
     ctx.arc(x, y, 19, 0, Math.PI * 2)
     ctx.fillStyle = "#fff"
@@ -695,10 +687,6 @@ function drawReplayModal(index){
     ctx.lineWidth = 2
     ctx.stroke()
 
-    ctx.font = "20px system-ui"
-    ctx.textAlign = "center"
-    ctx.textBaseline = "middle"
-    ctx.fillText(emoji, x, y)
   })
 
   info.textContent = event
