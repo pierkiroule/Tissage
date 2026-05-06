@@ -449,12 +449,9 @@ function renderInlineSummary(){
 
       <section class="summary-minimal-card">
         <h3>Replay du réseau</h3>
-        ${events.length
-          ? `<canvas id="replayCanvas" aria-label="Cadre de replay du réseau"></canvas>
-             <input id="replaySlider" type="range" min="0" max="${Math.max(events.length - 1, 0)}" value="${replayIndex}" step="1" aria-label="Défilement du replay">`
-          : `<div class="summary-replay-empty">Aucun replay disponible pour le moment.</div>`
-        }
+        <input id="replaySlider" type="range" min="0" max="${Math.max(events.length - 1, 0)}" value="${replayIndex}" step="1" aria-label="Défilement du replay">
         <p id="replayInfo">${replayEvent ? `${escapeHtml(replayEvent.elapsedLabel || '—')} · ${escapeHtml(replayEvent.type || 'événement')}` : 'Aucun événement enregistré.'}</p>
+        <button type="button" class="ghost" onclick="openReplayModal()">Ouvrir le replay en plein écran</button>
       </section>
 
       <section class="summary-minimal-card">
@@ -475,15 +472,17 @@ function renderInlineSummary(){
   `
 
   const slider = document.getElementById('replaySlider')
-  const replayCanvas = document.getElementById('replayCanvas')
-  if(slider && replayCanvas){
+  const replayInfo = document.getElementById('replayInfo')
+  if(slider && replayInfo){
     slider.oninput = () => {
       const idx = Number(slider.value)
       s.inlineReplayIndex = idx
       saveSession()
-      drawReplay(idx)
+      const evt = events[idx]
+      replayInfo.textContent = evt
+        ? `${evt.elapsedLabel || '—'} · ${evt.type || 'événement'}`
+        : 'Aucun événement enregistré.'
     }
-    drawReplay(Number(slider.value || 0))
   }
 
   const commentForm = document.getElementById('syntheseCommentForm')
