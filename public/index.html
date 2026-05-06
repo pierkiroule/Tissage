@@ -25,20 +25,68 @@
     <div id="tabPager" class="tab-pager">
       <section class="tab-panel active" data-tab-panel="accueil">
         <div class="card home-card">
-          <h2>Accueil</h2>
-          <p>Bienvenue 👋 Cette application vous aide à explorer vos ressentis pas à pas.</p>
-          <p><strong>Tuto ultra simple :</strong> vous activez des mots, vous déplacez les nœuds, puis vous créez des liens entre eux par contact.</p>
+          <div class="hero-logo" aria-hidden="true">
+            <svg class="logo-resonance" width="460" height="220" viewBox="0 0 460 220" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="Logo ÉchoÉvaluation">
+              <defs>
+                <linearGradient id="orbitGradient" x1="40" y1="110" x2="420" y2="110" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#38bdf8"/>
+                  <stop offset="45%" stop-color="#818cf8"/>
+                  <stop offset="100%" stop-color="#f472b6"/>
+                </linearGradient>
+                <radialGradient id="pearlBlue" cx="50%" cy="40%" r="65%">
+                  <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+                  <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.95"/>
+                </radialGradient>
+                <radialGradient id="pearlPurple" cx="50%" cy="40%" r="65%">
+                  <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+                  <stop offset="100%" stop-color="#818cf8" stop-opacity="0.95"/>
+                </radialGradient>
+                <radialGradient id="pearlGreen" cx="50%" cy="40%" r="65%">
+                  <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+                  <stop offset="100%" stop-color="#4ade80" stop-opacity="0.95"/>
+                </radialGradient>
+                <radialGradient id="pearlPink" cx="50%" cy="40%" r="65%">
+                  <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+                  <stop offset="100%" stop-color="#f472b6" stop-opacity="0.95"/>
+                </radialGradient>
+                <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="8" result="blur"/>
+                  <feMerge>
+                    <feMergeNode in="blur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+              </defs>
+              <ellipse class="logo-halo" cx="230" cy="110" rx="180" ry="72" fill="url(#orbitGradient)" opacity="0.08" filter="url(#softGlow)"/>
+              <ellipse class="logo-orbit" cx="230" cy="110" rx="178" ry="54" transform="rotate(-7 230 110)" stroke="url(#orbitGradient)" stroke-width="4" opacity="0.85" stroke-linecap="round"/>
+              <ellipse class="logo-inner" cx="230" cy="110" rx="150" ry="42" transform="rotate(-7 230 110)" stroke="white" stroke-opacity="0.35" stroke-width="1.4"/>
+              <g filter="url(#softGlow)">
+                <circle class="pearl p1" cx="63" cy="126" r="13" fill="url(#pearlBlue)"/>
+                <circle class="pearl p2" cx="128" cy="58" r="10" fill="url(#pearlPurple)"/>
+                <circle class="pearl p3" cx="232" cy="48" r="14" fill="url(#pearlGreen)"/>
+                <circle class="pearl p4" cx="343" cy="72" r="11" fill="url(#pearlPurple)"/>
+                <circle class="pearl p5" cx="394" cy="122" r="15" fill="url(#pearlPink)"/>
+                <circle cx="58" cy="121" r="3" fill="white" opacity="0.75"/>
+                <circle cx="124" cy="54" r="2.5" fill="white" opacity="0.7"/>
+                <circle cx="227" cy="43" r="3.5" fill="white" opacity="0.7"/>
+                <circle cx="339" cy="68" r="2.5" fill="white" opacity="0.7"/>
+                <circle cx="388" cy="116" r="3.5" fill="white" opacity="0.7"/>
+              </g>
+              <text x="230" y="116" text-anchor="middle" class="logo-wordmark">Écho-Évaluation</text>
+            </svg>
+          </div>
+          <p class="hero-subtitle">Un outil pour cueillir et tisser ce qui se vit dans le nid de votre experience sonore singulière.</p>
+          <p><strong>Comment participer :</strong> activez des mots, déplacez vos nœuds, puis créez des liens pour composer votre carte sensible.</p>
           <ul class="home-list">
-            <li><strong>Lier :</strong> faites glisser un nœud jusqu’à toucher un autre nœud. Un lien se crée automatiquement.</li>
-            <li><strong>Délier :</strong> touchez le trait entre deux nœuds pour retirer ce lien.</li>
-            <li><strong>Déselectionner un mot :</strong> touchez à nouveau son bouton, le nœud et ses liens disparaissent.</li>
+            <li><strong>Lier :</strong> faites se toucher deux bulles du réseau pour créer un lien.</li>
+            <li><strong>Délier :</strong> faites se retoucher les deux mêmes bulles pour retirer le lien.</li>
+            <li><strong>Retirer un mot :</strong> touchez à nouveau son bouton, la bulle et ses liens disparaissent.</li>
           </ul>
-          <p><strong>Les pages du menu :</strong></p>
-          <ul class="home-list">
-            <li>🏠 <strong>Accueil</strong> : mode d’emploi rapide de l’appli.</li>
-            <li>🎧 <strong>Écouter</strong> : parcours QR, étape par étape.</li>
-            <li>🕸️ <strong>Tisser</strong> : espace principal pour poser et relier vos ressentis.</li>
-            <li>📄 <strong>Synthétiser</strong> : résumé vivant de votre tissage.</li>
+          <p><strong>CGU (extrait)</strong></p>
+          <ul class="home-list cgu-list">
+            <li>Les données saisies sont traitées de façon anonyme pour l’analyse des ressentis.</li>
+            <li>Merci de ne pas déposer de mots, notes ou formulations contenant des noms de personnes identifiables.</li>
+            <li>En participant, vous confirmez partager un contenu respectueux et non diffamatoire.</li>
           </ul>
         </div>
       </section>
