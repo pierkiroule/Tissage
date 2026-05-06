@@ -3,6 +3,7 @@ const $ = id => document.getElementById(id)
 let openFamily = "corps"
 let activeMainTab = "accueil"
 let activeQrStep = null
+let selectedQrStep = null
 const QR_STEPS_TOTAL = 10
 let tipTimeout = null
 
@@ -90,7 +91,7 @@ function renderQrSteps(){
   if(!host || !window.BDR?.session) return
 
   const unlocked = new Set(window.BDR.session.unlockedQrSteps || [])
-  host.innerHTML = Array.from({ length: QR_STEPS_TOTAL }, (_, i) => {
+  const stepsMarkup = Array.from({ length: QR_STEPS_TOTAL }, (_, i) => {
     const step = i + 1
     const angle = ((Math.PI * 2) / QR_STEPS_TOTAL) * i - Math.PI / 2
     const x = 50 + Math.cos(angle) * 40
@@ -101,15 +102,31 @@ function renderQrSteps(){
         type="button"
         class="qr-step ${isUnlocked ? "unlocked" : "locked"}"
         style="left:${x}%;top:${y}%;"
-        onclick="openQrStep(${step})"
+        onclick="selectQrStep(${step})"
         aria-label="Étape ${step}"
       >${isUnlocked ? "👂" : `<span class="qr-step-number">${step}</span>`}</button>
     `
   }).join("")
+
+  const centerMarkup = selectedQrStep
+    ? `<button type="button" class="qr-step-center-btn" onclick="openQrStep(${selectedQrStep})" aria-label="Ouvrir la fiche de l'étape ${selectedQrStep}">Étape ${selectedQrStep}</button>`
+    : `<span class="qr-step-center-hint">Touchez une étape</span>`
+
+  host.innerHTML = `${stepsMarkup}<div class="qr-step-center">${centerMarkup}</div>`
+}
+
+function selectQrStep(step){
+  selectedQrStep = step
+  const status = $("qrStatus")
+  if(status){
+    status.textContent = `Étape ${step} sélectionnée. Touchez le titre au centre pour ouvrir la fiche.`
+  }
+  renderQrSteps()
 }
 
 function openQrStep(step){
   activeQrStep = step
+  selectedQrStep = step
   const modal = $("qrModal")
   const title = $("qrModalTitle")
   if(title) title.textContent = `Étape ${step} · Mon parcours d’écoute sensible`
@@ -209,6 +226,10 @@ function closeQrModal(){
   if(modal) modal.classList.add("hidden")
   if(activeQrStep !== null) markQrStepProgress(activeQrStep, "closed")
   activeQrStep = null
+  const status = $("qrStatus")
+  if(status){
+    status.textContent = "Touchez un numéro, puis le titre au centre pour ouvrir sa fiche d’étape."
+  }
 }
 
 function renderFamilyTabs(){
