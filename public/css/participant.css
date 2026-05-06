@@ -88,6 +88,35 @@ button{
 .scan-card{
   margin:16px auto;
 }
+.qr-steps-circle{
+  position:relative;
+  width:min(86vw,360px);
+  aspect-ratio:1/1;
+  margin:16px auto;
+  border:2px dashed #cfcfcf;
+  border-radius:50%;
+  background:radial-gradient(circle,#fff 0%,#fafafa 100%);
+}
+.qr-step{
+  position:absolute;
+  transform:translate(-50%,-50%);
+  width:58px;
+  height:58px;
+  border-radius:999px;
+  border:2px solid #000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+  font-weight:800;
+}
+.qr-step.locked{
+  background:linear-gradient(135deg,#8a8dff,#ff82ca);
+  color:#fff;
+}
+.qr-step.unlocked{
+  background:#fff7c8;
+}
 .scan-actions,.scan-manual{
   display:flex;
   gap:8px;
@@ -118,6 +147,7 @@ button{
   display:flex;
   flex-direction:column;
   overflow:hidden;
+  padding:0 10px 10px;
 }
 .qr-modal-head{
   display:flex;
