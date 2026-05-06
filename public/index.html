@@ -22,14 +22,6 @@
   </section>
 
   <section id="app" class="app">
-    <header class="app-head">
-      <div class="main-tabs" id="mainTabs">
-        <button class="main-tab active" data-tab="ecouter" type="button">Écouter</button>
-        <button class="main-tab" data-tab="tisser" type="button">TISSER</button>
-        <button class="main-tab" data-tab="synthetiser" type="button">SYNTHÉTISER</button>
-      </div>
-    </header>
-
     <div id="tabPager" class="tab-pager">
       <section class="tab-panel active" data-tab-panel="ecouter">
         <div class="card scan-card">
@@ -68,6 +60,13 @@
         <section id="syntheseInline" class="summary-page"></section>
       </section>
     </div>
+    <nav class="app-bottom-nav" aria-label="Menu principal">
+      <div class="main-tabs" id="mainTabs">
+        <button class="main-tab active" data-tab="ecouter" type="button" aria-label="Écouter" title="Écouter">🎧</button>
+        <button class="main-tab" data-tab="tisser" type="button" aria-label="Résonner" title="Résonner">🕸️</button>
+        <button class="main-tab" data-tab="synthetiser" type="button" aria-label="Synthétiser" title="Synthétiser">📄</button>
+      </div>
+    </nav>
   </section>
 
   <section id="comment" class="screen">

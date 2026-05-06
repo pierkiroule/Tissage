@@ -55,8 +55,10 @@ button{
 .app.active{
   display:flex;
 }
-.app-head{
-  border-bottom:1px solid var(--border);
+.app-bottom-nav{
+  border-top:1px solid var(--border);
+  padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+  background:#fff;
 }
 .main-tabs{
   display:flex;
@@ -65,9 +67,11 @@ button{
 }
 .main-tab{
   flex:1;
-  min-width:110px;
+  min-width:0;
   padding:10px 12px;
   border-radius:12px;
+  font-size:28px;
+  line-height:1;
 }
 .main-tab.active{
   background:#000;
