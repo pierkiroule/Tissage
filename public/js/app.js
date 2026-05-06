@@ -494,6 +494,147 @@ function buildSyntheseInsights(session){
   }
 }
 
+function buildCategoryTimelineData(session){
+  const events = Array.isArray(session?.events) ? session.events : []
+  const nodes = Array.isArray(session?.active) ? session.active : []
+  if(!events.length || !nodes.length) return { categories: [], frames: [] }
+
+  const nodeFamilyByLabel = new Map()
+  nodes.forEach(n => {
+    if(!n?.label) return
+    nodeFamilyByLabel.set(n.label, n.family || "autres")
+  })
+
+  const activeByLabel = {}
+  const activeFamilyCount = {}
+  const categoriesSet = new Set()
+  const frames = []
+
+  events.forEach((event, i) => {
+    const label = event?.label
+    const family = event?.family || (label ? nodeFamilyByLabel.get(label) : "") || "autres"
+
+    if(event?.type === "word_on" && label){
+      if(!activeByLabel[label]){
+        activeByLabel[label] = family
+        activeFamilyCount[family] = (activeFamilyCount[family] || 0) + 1
+      }
+    } else if(event?.type === "word_off" && label){
+      const existingFamily = activeByLabel[label]
+      if(existingFamily){
+        activeFamilyCount[existingFamily] = Math.max(0, (activeFamilyCount[existingFamily] || 0) - 1)
+        delete activeByLabel[label]
+      }
+    } else if(event?.type === "note_add" && label){
+      if(!activeByLabel[label]){
+        activeByLabel[label] = "perso"
+        activeFamilyCount.perso = (activeFamilyCount.perso || 0) + 1
+      }
+    }
+
+    Object.keys(activeFamilyCount).forEach(cat => {
+      if(activeFamilyCount[cat] > 0) categoriesSet.add(cat)
+    })
+
+    const total = Object.values(activeFamilyCount).reduce((sum, count) => sum + count, 0)
+    const proportions = {}
+    categoriesSet.forEach(cat => {
+      proportions[cat] = total ? ((activeFamilyCount[cat] || 0) / total) : 0
+    })
+
+    frames.push({
+      index: i,
+      elapsedLabel: event?.elapsedLabel || formatElapsed(Number(event?.elapsedMs || 0)),
+      proportions
+    })
+  })
+
+  const categories = Array.from(categoriesSet)
+  const prettified = categories.map(cat => ({
+    key: cat,
+    label: window.BDR_LABELS?.[cat] || cat
+  }))
+  return { categories: prettified, frames }
+}
+
+function renderCategoryTimelineFrame(data, frameIndex){
+  const barsHost = document.getElementById("categoryTimelineBars")
+  const infoHost = document.getElementById("categoryTimelineInfo")
+  if(!barsHost || !infoHost || !data.frames.length) return
+
+  const safeIndex = Math.max(0, Math.min(frameIndex, data.frames.length - 1))
+  const frame = data.frames[safeIndex]
+  const sorted = data.categories
+    .map(cat => ({ ...cat, proportion: frame.proportions[cat.key] || 0 }))
+    .sort((a,b) => b.proportion - a.proportion)
+
+  barsHost.innerHTML = sorted.map(item => `
+    <div class="category-timeline-row">
+      <span>${escapeHtml(item.label)}</span>
+      <div class="category-timeline-track">
+        <div class="category-timeline-fill" style="width:${(item.proportion * 100).toFixed(1)}%"></div>
+      </div>
+      <b>${(item.proportion * 100).toFixed(0)}%</b>
+    </div>
+  `).join("")
+
+  const leader = sorted[0]
+  infoHost.textContent = leader
+    ? `${frame.elapsedLabel} · dominante: ${leader.label} (${(leader.proportion * 100).toFixed(0)}%)`
+    : frame.elapsedLabel
+}
+
+function initCategoryTimeline(data){
+  if(!data.frames.length) return
+  const slider = document.getElementById("categoryTimelineSlider")
+  const timeLabel = document.getElementById("categoryTimelineTime")
+  let frameIndex = 0
+  let timer = null
+
+  const stop = () => {
+    if(timer){
+      clearInterval(timer)
+      timer = null
+    }
+  }
+
+  const updateUI = () => {
+    renderCategoryTimelineFrame(data, frameIndex)
+    if(slider) slider.value = String(frameIndex)
+    if(timeLabel){
+      const current = data.frames[frameIndex]
+      timeLabel.textContent = `Horodatage : ${current?.elapsedLabel || "00:00:00"}`
+    }
+  }
+
+  if(slider){
+    slider.min = "0"
+    slider.max = String(Math.max(0, data.frames.length - 1))
+    slider.step = "1"
+    slider.value = "0"
+    slider.oninput = e => {
+      stop()
+      frameIndex = Number(e.target.value || 0)
+      updateUI()
+    }
+  }
+
+  updateUI()
+
+  timer = setInterval(() => {
+    frameIndex += 1
+    if(frameIndex >= data.frames.length){
+      frameIndex = data.frames.length - 1
+      stop()
+    }
+    updateUI()
+  }, 220)
+
+  window.addEventListener("beforeunload", () => {
+    stop()
+  }, { once:true })
+}
+
 function renderInlineSummary(){
   const host = $("syntheseInline")
   if(!host || !window.BDR?.session) return
@@ -537,6 +678,17 @@ function renderInlineSummary(){
       </section>
 
       <section class="summary-minimal-card">
+        <h3>Répartition des catégories (animation)</h3>
+        <p class="muted">Une lecture simple de l'évolution des catégories de mots au fil de votre parcours.</p>
+        <div id="categoryTimelineBars" class="category-timeline-bars"></div>
+        <label for="categoryTimelineSlider" class="category-timeline-time-wrap">
+          <span id="categoryTimelineTime" class="category-timeline-time">Horodatage : 00:00:00</span>
+        </label>
+        <input id="categoryTimelineSlider" class="category-timeline-slider" type="range" min="0" max="0" value="0" step="1">
+        <p id="categoryTimelineInfo" class="category-timeline-info muted"></p>
+      </section>
+
+      <section class="summary-minimal-card">
         <h3>Votre commentaire sur cette synthèse</h3>
         <p class="muted">Déposer votre commentaire sur cette synthèse de votre expérience. Que vous apprend cette expérience d’écoute ?</p>
         <form id="syntheseCommentForm" class="summary-comment-form">
@@ -564,6 +716,9 @@ function renderInlineSummary(){
       renderInlineSummary()
     }
   }
+
+  const categoryTimelineData = buildCategoryTimelineData(s)
+  initCategoryTimeline(categoryTimelineData)
 }
 
 

@@ -1769,3 +1769,51 @@ button.done{
 @media (max-width:520px){
   .summary-analysis-grid{ grid-template-columns:1fr; }
 }
+
+.category-timeline-bars{
+  display:grid;
+  gap:8px;
+  margin-top:8px;
+}
+
+.category-timeline-row{
+  display:grid;
+  grid-template-columns:minmax(80px,120px) 1fr 44px;
+  align-items:center;
+  gap:8px;
+  font-size:13px;
+}
+
+.category-timeline-track{
+  height:14px;
+  border-radius:999px;
+  background:#e2e8f0;
+  overflow:hidden;
+}
+
+.category-timeline-fill{
+  height:100%;
+  border-radius:999px;
+  background:linear-gradient(90deg,#93c5fd,#2563eb);
+  transition:width .18s ease-out;
+}
+
+.category-timeline-info{
+  margin:10px 0 0;
+}
+
+.category-timeline-time-wrap{
+  display:block;
+  margin-top:10px;
+}
+
+.category-timeline-time{
+  font-size:13px;
+  font-weight:600;
+  color:#334155;
+}
+
+.category-timeline-slider{
+  width:100%;
+  margin-top:6px;
+}
