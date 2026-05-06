@@ -198,8 +198,16 @@ function toggleWord(family, label){
     window.BDR.session.links = (window.BDR.session.links || []).filter(l => l.a !== found.id && l.b !== found.id)
     logEvent("word_off", { label, family })
   } else {
+    const zoneRect = $("zone")?.getBoundingClientRect()
+    const hasValidCenter = center.max > 0
+    const centerX = hasValidCenter ? center.x : (zoneRect?.width || 0) / 2
+    const centerY = hasValidCenter ? center.y : (zoneRect?.height || 0) / 2
+    const maxRadius = hasValidCenter
+      ? center.max
+      : Math.min(zoneRect?.width || 0, zoneRect?.height || 0) * .55
+
     const angle = Math.random() * Math.PI * 2
-    const r = center.max * .55
+    const r = maxRadius * .55
 
     const note = family === "perso"
       ? (window.BDR.session.personalNotes || []).find(n => n.label === label)
@@ -212,8 +220,8 @@ function toggleWord(family, label){
       custom: family === "perso",
       noteText: note?.text || "",
       noteId: note?.id || "",
-      x: center.x + Math.cos(angle) * r,
-      y: center.y + Math.sin(angle) * r
+      x: centerX + Math.cos(angle) * r,
+      y: centerY + Math.sin(angle) * r
     })
 
     logEvent("word_on", { label, family })
@@ -241,6 +249,11 @@ function addNote(){
     elapsedLabel: formatElapsed(getElapsedMs())
   }
 
+  const zoneRect = $("zone")?.getBoundingClientRect()
+  const hasValidCenter = center.max > 0
+  const centerX = hasValidCenter ? center.x : (zoneRect?.width || 0) / 2
+  const centerY = hasValidCenter ? center.y : (zoneRect?.height || 0) / 2
+
   window.BDR.session.personalNotes.push(note)
 
   window.BDR.session.active.push({
@@ -250,8 +263,8 @@ function addNote(){
     custom: true,
     noteText: text,
     noteId: note.id,
-    x: center.x,
-    y: center.y
+    x: centerX,
+    y: centerY
   })
 
   input.value = ""
