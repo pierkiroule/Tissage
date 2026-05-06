@@ -10,7 +10,7 @@ function now(){
 
 function createSession(participantCode, sessionCode){
   return {
-    app:"Mon Tissage Résonances",
+    app:"Outil expérimental d’Écho-évaluation",
     version:"0.9",
     participantCode,
     sessionCode,
