@@ -433,6 +433,52 @@ function formatCommentDate(iso){
   }
 }
 
+
+function buildSyntheseInsights(session){
+  const events = session.events || []
+  const notes = session.personalNotes || []
+  const nodes = session.active || []
+  const links = session.links || []
+
+  const totalMs = events.length ? Math.max(...events.map(e => Number(e.elapsedMs || 0))) : 0
+  const minutes = (totalMs / 60000)
+  const uniqueLabels = new Set()
+  events.forEach(e => {
+    if(e.label) uniqueLabels.add(e.label)
+    if(e.source) uniqueLabels.add(e.source)
+    if(e.target) uniqueLabels.add(e.target)
+  })
+
+  const typeCounts = events.reduce((acc, e) => {
+    const key = String(e.type || 'interaction')
+    acc[key] = (acc[key] || 0) + 1
+    return acc
+  }, {})
+  const topTypes = Object.entries(typeCounts).sort((a,b) => b[1]-a[1]).slice(0,3)
+
+  const firstHalf = events.filter(e => Number(e.elapsedMs || 0) <= totalMs / 2).length
+  const secondHalf = Math.max(0, events.length - firstHalf)
+  const tempoMsg = secondHalf > firstHalf
+    ? "Le rythme s'intensifie dans la seconde partie du parcours, signe d'une exploration qui gagne en profondeur."
+    : "Le rythme est plutôt fort dès le début, puis se stabilise progressivement."
+
+  const intensity = nodes.length ? (links.length / nodes.length) : 0
+
+  const topTypesLabel = topTypes.length
+    ? topTypes.map(([k,v]) => `${k} (${v})`).join(' · ')
+    : 'Aucun type dominant observé'
+
+  return {
+    minutes,
+    uniqueLabels: uniqueLabels.size,
+    interactions: events.length,
+    intensity,
+    topTypesLabel,
+    tempoMsg,
+    notes: notes.length
+  }
+}
+
 function renderInlineSummary(){
   const host = $("syntheseInline")
   if(!host || !window.BDR?.session) return
@@ -443,8 +489,7 @@ function renderInlineSummary(){
   const notes = s.personalNotes || []
   const events = s.events || []
   const syntheseComments = getSyntheseComments()
-  const replayIndex = Math.max(0, Number(s.inlineReplayIndex || Math.max(events.length - 1, 0)))
-  const replayEvent = events[replayIndex]
+  const insights = buildSyntheseInsights(s)
 
   host.innerHTML = `
     <section class="summary-minimal">
@@ -459,13 +504,21 @@ function renderInlineSummary(){
         <article><b>${notes.length}</b><span>notes</span></article>
       </section>
 
-      <section class="summary-minimal-card">
-        <h3>Replay du réseau</h3>
-        <div class="replay-controls">
-          <button id="replayPlayPause" type="button" class="ghost" aria-label="Lecture du replay">▶️ Lire</button>
-          <button type="button" class="ghost" onclick="openReplayModal()">Plein écran</button>
+      <section class="summary-minimal-card summary-analysis-card">
+        <h3>Analyse rédigée de votre parcours</h3>
+        <p class="summary-analysis-lead">Un regard clair sur ce qui a résonné, ce qui s'est densifié, et ce qui a évolué pendant votre exploration.</p>
+        <div class="summary-analysis-grid">
+          <article><b>${insights.interactions}</b><span>interactions captées</span></article>
+          <article><b>${insights.uniqueLabels}</b><span>repères mobilisés</span></article>
+          <article><b>${insights.minutes.toFixed(1)} min</b><span>durée active</span></article>
+          <article><b>${insights.intensity.toFixed(2)}</b><span>liens / élément</span></article>
         </div>
-        <p id="replayInfo">${replayEvent ? `${escapeHtml(replayEvent.elapsedLabel || '—')} · ${escapeHtml(replayEvent.type || 'événement')}` : 'Aucun événement enregistré.'}</p>
+        <p><strong>Dynamique dominante :</strong> ${escapeHtml(insights.topTypesLabel)}.</p>
+        <p>${escapeHtml(insights.tempoMsg)}</p>
+        <p>${insights.notes > 0
+          ? `Vos ${insights.notes} note(s) personnelles confirment une posture réflexive: vous n'avez pas seulement relié des éléments, vous les avez interprétés.`
+          : "Aucune note n'a été déposée pour l'instant : ajouter une note permet de mieux expliciter ce qui vous a marqué et pourquoi."}
+        </p>
       </section>
 
       <section class="summary-minimal-card">
@@ -484,12 +537,6 @@ function renderInlineSummary(){
       </section>
     </section>
   `
-
-  const replayPlayPause = document.getElementById('replayPlayPause')
-  if(replayPlayPause){
-    replayPlayPause.onclick = () => toggleReplayPlayback('inline')
-    updateReplayButtons()
-  }
 
   const commentForm = document.getElementById('syntheseCommentForm')
   const commentInput = document.getElementById('syntheseCommentInput')
