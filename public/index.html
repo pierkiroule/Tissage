@@ -25,20 +25,37 @@
     <div id="tabPager" class="tab-pager">
       <section class="tab-panel active" data-tab-panel="accueil">
         <div class="card home-card">
-          <h2>Accueil</h2>
-          <p>Bienvenue 👋 Cette application vous aide à explorer vos ressentis pas à pas.</p>
-          <p><strong>Tuto ultra simple :</strong> vous activez des mots, vous déplacez les nœuds, puis vous créez des liens entre eux par contact.</p>
+          <div class="hero-logo" aria-hidden="true">
+            <svg viewBox="0 0 360 220" role="img" aria-label="Logo ÉchoÉvaluation">
+              <defs>
+                <linearGradient id="nestStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#0d47a1" />
+                  <stop offset="45%" stop-color="#00695c" />
+                  <stop offset="100%" stop-color="#6a1b9a" />
+                </linearGradient>
+              </defs>
+              <ellipse class="nest-orbit nest-orbit-a" cx="180" cy="110" rx="122" ry="68"></ellipse>
+              <ellipse class="nest-orbit nest-orbit-b" cx="180" cy="110" rx="108" ry="58"></ellipse>
+              <ellipse class="nest-orbit nest-orbit-c" cx="180" cy="110" rx="95" ry="49"></ellipse>
+              <circle class="pearl pearl-blue" cx="88" cy="84" r="12"></circle>
+              <circle class="pearl pearl-green" cx="148" cy="58" r="12"></circle>
+              <circle class="pearl pearl-orange" cx="218" cy="162" r="12"></circle>
+              <circle class="pearl pearl-violet" cx="284" cy="128" r="12"></circle>
+            </svg>
+          </div>
+          <h2>ÉchoÉvaluation</h2>
+          <p class="hero-subtitle">Un outil pour cueillir et tisser ce qui se vit dans le nid de votre experience sonore singulière.</p>
+          <p><strong>Comment participer :</strong> activez des mots, déplacez vos nœuds, puis créez des liens pour composer votre carte sensible.</p>
           <ul class="home-list">
-            <li><strong>Lier :</strong> faites glisser un nœud jusqu’à toucher un autre nœud. Un lien se crée automatiquement.</li>
+            <li><strong>Lier :</strong> faites glisser un nœud jusqu’à en toucher un autre.</li>
             <li><strong>Délier :</strong> touchez le trait entre deux nœuds pour retirer ce lien.</li>
-            <li><strong>Déselectionner un mot :</strong> touchez à nouveau son bouton, le nœud et ses liens disparaissent.</li>
+            <li><strong>Retirer un mot :</strong> touchez à nouveau son bouton, le nœud et ses liens disparaissent.</li>
           </ul>
-          <p><strong>Les pages du menu :</strong></p>
-          <ul class="home-list">
-            <li>🏠 <strong>Accueil</strong> : mode d’emploi rapide de l’appli.</li>
-            <li>🎧 <strong>Écouter</strong> : parcours QR, étape par étape.</li>
-            <li>🕸️ <strong>Tisser</strong> : espace principal pour poser et relier vos ressentis.</li>
-            <li>📄 <strong>Synthétiser</strong> : résumé vivant de votre tissage.</li>
+          <p><strong>CGU (extrait)</strong></p>
+          <ul class="home-list cgu-list">
+            <li>Les données saisies sont traitées de façon anonyme pour l’analyse des ressentis.</li>
+            <li>Merci de ne pas déposer de mots, notes ou formulations contenant des noms de personnes identifiables.</li>
+            <li>En participant, vous confirmez partager un contenu respectueux et non diffamatoire.</li>
           </ul>
         </div>
       </section>
