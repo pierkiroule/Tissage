@@ -17,12 +17,39 @@
       <p>Choisissez un code ou pseudo puis commencez votre tissage.</p>
       <p>L’écho-évaluation ne cherche pas à mesurer une personne.</p>
       <p>Elle aide à observer ce qui résonne, se relie ou se transforme au fil d’une expérience.</p>
+      <p><button id="openAncrageModalBtn" class="tuto-link" type="button">Ancrage theorique et methodologique</button></p>
 
       <input id="pseudoInput" placeholder="Votre pseudo" />
 
       <button id="startBtn">Commencer</button>
     </div>
   </section>
+
+  <div id="ancrageModal" class="tuto-modal hidden" role="dialog" aria-modal="true" aria-labelledby="ancrageModalTitle">
+    <div class="tuto-modal-card">
+      <button id="closeAncrageModalBtn" class="tuto-modal-close" type="button" aria-label="Fermer la modale ancrage">✕</button>
+      <h3 id="ancrageModalTitle">Ancrage théorique et méthodologique</h3>
+      <div class="tuto-modal-body">
+        <p>L’Écho-évaluation est un dispositif expérimental de cartographie sensible du vécu.</p>
+        <p>Contrairement aux approches classiques d’auto-évaluation centrées sur le score ou la mesure, elle cherche à rendre perceptibles des dynamiques de résonance, de relation et de transformation au fil d’une expérience.</p>
+        <p>Le dispositif repose sur :</p>
+        <ul class="home-list">
+          <li>un lexique expérientiel structuré,</li>
+          <li>des associations de mots,</li>
+          <li>des liens entre éléments,</li>
+          <li>des notes réflexives,</li>
+          <li>une spatialisation interactive du vécu.</li>
+        </ul>
+        <p>L’approche s’inspire de la phénoménologie et considère l’expérience comme située, incarnée et relationnelle.</p>
+        <p>Elle mobilise également la théorie de la résonance d’Hartmut Rosa, en explorant ce qui touche, mobilise, relie ou transforme la personne dans une situation donnée.</p>
+        <p>Le dispositif s’ancre aussi dans la théorie de l’acteur-réseau de Bruno Latour : l’expérience y est comprise comme un réseau dynamique d’interactions entre humains, mots, sons, objets, corps, environnements et dispositifs techniques.</p>
+        <p>L’outil est également inspiré des recherches sur l’écoute, les paysages sonores et l’écologie acoustique menées notamment par R. Murray Schafer et Barry Truax.</p>
+        <p>Le lexique utilisé s’appuie sur des dimensions fréquemment étudiées dans les recherches sur les émotions, l’expérience utilisateur, la perception sonore et les approches qualitatives du vécu.</p>
+        <p>L’Écho-évaluation ne constitue ni un test psychométrique ni un outil diagnostique.</p>
+        <p>Elle doit être comprise comme un support de médiation, de réflexivité et d’exploration expérientielle.</p>
+      </div>
+    </div>
+  </div>
 
   <section id="app" class="app">
     <div id="tutoModal" class="tuto-modal hidden" role="dialog" aria-modal="true" aria-labelledby="tutoModalTitle">
