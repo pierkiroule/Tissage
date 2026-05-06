@@ -27,21 +27,52 @@
         <div class="card home-card">
           <h2 class="home-title">ÉchoÉvaluation</h2>
           <div class="hero-logo" aria-hidden="true">
-            <svg viewBox="0 0 360 220" role="img" aria-label="Logo ÉchoÉvaluation">
+            <svg width="460" height="220" viewBox="0 0 460 220" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="Logo ÉchoÉvaluation">
               <defs>
-                <linearGradient id="proRing" x1="12%" y1="10%" x2="86%" y2="90%">
-                  <stop offset="0%" stop-color="#f8fbff" />
-                  <stop offset="35%" stop-color="#6eb0ff" />
-                  <stop offset="68%" stop-color="#345cde" />
-                  <stop offset="100%" stop-color="#0f274e" />
+                <linearGradient id="orbitGradient" x1="40" y1="110" x2="420" y2="110" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#38bdf8"/>
+                  <stop offset="45%" stop-color="#818cf8"/>
+                  <stop offset="100%" stop-color="#f472b6"/>
                 </linearGradient>
-                <filter id="logoGlow" x="-20%" y="-30%" width="140%" height="180%">
-                  <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#0f2f66" flood-opacity=".25"/>
+                <radialGradient id="pearlBlue" cx="50%" cy="40%" r="65%">
+                  <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+                  <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.95"/>
+                </radialGradient>
+                <radialGradient id="pearlPurple" cx="50%" cy="40%" r="65%">
+                  <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+                  <stop offset="100%" stop-color="#818cf8" stop-opacity="0.95"/>
+                </radialGradient>
+                <radialGradient id="pearlGreen" cx="50%" cy="40%" r="65%">
+                  <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+                  <stop offset="100%" stop-color="#4ade80" stop-opacity="0.95"/>
+                </radialGradient>
+                <radialGradient id="pearlPink" cx="50%" cy="40%" r="65%">
+                  <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+                  <stop offset="100%" stop-color="#f472b6" stop-opacity="0.95"/>
+                </radialGradient>
+                <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="8" result="blur"/>
+                  <feMerge>
+                    <feMergeNode in="blur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
                 </filter>
               </defs>
-              <ellipse class="pro-ellipse-shadow" cx="180" cy="124" rx="124" ry="56"></ellipse>
-              <ellipse class="pro-ellipse" cx="180" cy="104" rx="124" ry="56"></ellipse>
-              <ellipse class="pro-highlight" cx="145" cy="86" rx="66" ry="24"></ellipse>
+              <ellipse class="logo-halo" cx="230" cy="110" rx="180" ry="72" fill="url(#orbitGradient)" opacity="0.08" filter="url(#softGlow)"/>
+              <ellipse class="logo-orbit" cx="230" cy="110" rx="178" ry="54" transform="rotate(-7 230 110)" stroke="url(#orbitGradient)" stroke-width="4" opacity="0.85" stroke-linecap="round"/>
+              <ellipse class="logo-inner" cx="230" cy="110" rx="150" ry="42" transform="rotate(-7 230 110)" stroke="white" stroke-opacity="0.35" stroke-width="1.4"/>
+              <g filter="url(#softGlow)">
+                <circle class="pearl p1" cx="63" cy="126" r="13" fill="url(#pearlBlue)"/>
+                <circle class="pearl p2" cx="128" cy="58" r="10" fill="url(#pearlPurple)"/>
+                <circle class="pearl p3" cx="232" cy="48" r="14" fill="url(#pearlGreen)"/>
+                <circle class="pearl p4" cx="343" cy="72" r="11" fill="url(#pearlPurple)"/>
+                <circle class="pearl p5" cx="394" cy="122" r="15" fill="url(#pearlPink)"/>
+                <circle cx="58" cy="121" r="3" fill="white" opacity="0.75"/>
+                <circle cx="124" cy="54" r="2.5" fill="white" opacity="0.7"/>
+                <circle cx="227" cy="43" r="3.5" fill="white" opacity="0.7"/>
+                <circle cx="339" cy="68" r="2.5" fill="white" opacity="0.7"/>
+                <circle cx="388" cy="116" r="3.5" fill="white" opacity="0.7"/>
+              </g>
             </svg>
           </div>
           <p class="hero-subtitle">Un outil pour cueillir et tisser ce qui se vit dans le nid de votre experience sonore singulière.</p>

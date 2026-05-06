@@ -128,28 +128,15 @@ button{
   height:auto;
   display:block;
 }
-.pro-ellipse-shadow{
-  fill:none;
-  stroke:rgba(23,54,110,.22);
-  stroke-width:18;
-  filter:blur(8px);
-}
-.pro-ellipse{
-  fill:none;
-  stroke:url(#proRing);
-  stroke-width:10;
-  stroke-linecap:round;
-  filter:url(#logoGlow);
-  animation:proSpin 8s ease-in-out infinite;
-}
-.pro-highlight{
-  fill:none;
-  stroke:rgba(255,255,255,.86);
-  stroke-width:4;
-  stroke-linecap:round;
-  opacity:.9;
-  animation:proShine 5.4s ease-in-out infinite;
-}
+.logo-halo{ animation:haloPulse 6s ease-in-out infinite; }
+.logo-orbit{ transform-origin:230px 110px; animation:orbitDrift 8s ease-in-out infinite; }
+.logo-inner{ transform-origin:230px 110px; animation:innerDrift 8s ease-in-out infinite; }
+.pearl{ transform-origin:center; animation:pearlFloat 3.6s ease-in-out infinite; }
+.p1{ animation-delay:.1s; }
+.p2{ animation-delay:.5s; }
+.p3{ animation-delay:.9s; }
+.p4{ animation-delay:1.3s; }
+.p5{ animation-delay:1.7s; }
 .hero-subtitle{
   font-size:20px !important;
   line-height:1.45 !important;
@@ -160,13 +147,21 @@ button{
   border-radius:14px;
   padding:12px 16px 12px 28px;
 }
-@keyframes proSpin{
-  0%,100%{ transform:translateY(0) rotateX(0deg); }
-  50%{ transform:translateY(-2px) rotateX(10deg); }
+@keyframes haloPulse{
+  0%,100%{ opacity:.08; }
+  50%{ opacity:.16; }
 }
-@keyframes proShine{
-  0%,100%{ opacity:.25; }
-  50%{ opacity:.95; }
+@keyframes orbitDrift{
+  0%,100%{ transform:rotate(-7deg) translateY(0); }
+  50%{ transform:rotate(-5deg) translateY(-1px); }
+}
+@keyframes innerDrift{
+  0%,100%{ transform:rotate(-7deg) scale(1); opacity:.35; }
+  50%{ transform:rotate(-8deg) scale(1.02); opacity:.55; }
+}
+@keyframes pearlFloat{
+  0%,100%{ transform:translateY(0) scale(1); }
+  50%{ transform:translateY(-4px) scale(1.04); }
 }
 .scan-card h2,
 .scan-card p,
