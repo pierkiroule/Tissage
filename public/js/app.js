@@ -449,8 +449,11 @@ function renderInlineSummary(){
 
       <section class="summary-minimal-card">
         <h3>Replay du réseau</h3>
-        <canvas id="replayCanvas" aria-label="Cadre de replay du réseau"></canvas>
-        <input id="replaySlider" type="range" min="0" max="${Math.max(events.length - 1, 0)}" value="${replayIndex}" step="1" aria-label="Défilement du replay">
+        ${events.length
+          ? `<canvas id="replayCanvas" aria-label="Cadre de replay du réseau"></canvas>
+             <input id="replaySlider" type="range" min="0" max="${Math.max(events.length - 1, 0)}" value="${replayIndex}" step="1" aria-label="Défilement du replay">`
+          : `<div class="summary-replay-empty">Aucun replay disponible pour le moment.</div>`
+        }
         <p id="replayInfo">${replayEvent ? `${escapeHtml(replayEvent.elapsedLabel || '—')} · ${escapeHtml(replayEvent.type || 'événement')}` : 'Aucun événement enregistré.'}</p>
       </section>
 
@@ -472,7 +475,8 @@ function renderInlineSummary(){
   `
 
   const slider = document.getElementById('replaySlider')
-  if(slider){
+  const replayCanvas = document.getElementById('replayCanvas')
+  if(slider && replayCanvas){
     slider.oninput = () => {
       const idx = Number(slider.value)
       s.inlineReplayIndex = idx

@@ -1623,3 +1623,19 @@ button.done{
 @media (max-width:520px){
   .summary-minimal-stats{ grid-template-columns:1fr; }
 }
+
+.summary-minimal-card #replayCanvas{
+  width:100%;
+  height:180px;
+  display:block;
+  margin:8px 0;
+}
+
+.summary-replay-empty{
+  border:1px dashed #cbd5e1;
+  border-radius:12px;
+  padding:14px;
+  color:#64748b;
+  background:#f8fafc;
+  margin:8px 0;
+}
