@@ -1731,3 +1731,30 @@ button.done{
   background:#f8fafc;
   margin:8px 0;
 }
+
+
+.summary-analysis-card{
+  background:linear-gradient(180deg,#fff 0%, #f7fbff 100%);
+}
+.summary-analysis-lead{
+  margin:0 0 10px;
+  color:#334155;
+}
+.summary-analysis-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+  margin:10px 0 12px;
+}
+.summary-analysis-grid article{
+  border:1px solid #bfdbfe;
+  background:#eff6ff;
+  border-radius:12px;
+  padding:10px;
+}
+.summary-analysis-grid b{ display:block; font-size:20px; color:#1d4ed8; }
+.summary-analysis-grid span{ font-size:12px; color:#334155; }
+
+@media (max-width:520px){
+  .summary-analysis-grid{ grid-template-columns:1fr; }
+}
