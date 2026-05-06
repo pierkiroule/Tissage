@@ -382,6 +382,42 @@ window.goToSummary = goToSummary
 window.backToSession = backToSession
 window.openQrStep = openQrStep
 
+
+function getSyntheseComments(){
+  const comments = window.BDR.session?.comments?.syntheseList
+  return Array.isArray(comments) ? comments : []
+}
+
+function addSyntheseComment(text){
+  const s = window.BDR.session
+  if(!s) return
+  if(!s.comments) s.comments = {}
+  if(!Array.isArray(s.comments.syntheseList)) s.comments.syntheseList = []
+
+  s.comments.syntheseList.unshift({
+    id: uid(),
+    text: text.trim(),
+    at: now()
+  })
+
+  s.comments.synthese = text.trim()
+  saveSession()
+  showSave()
+}
+
+function formatCommentDate(iso){
+  try {
+    return new Date(iso).toLocaleString('fr-FR', {
+      day:'2-digit',
+      month:'2-digit',
+      hour:'2-digit',
+      minute:'2-digit'
+    })
+  } catch {
+    return '—'
+  }
+}
+
 function renderInlineSummary(){
   const host = $("syntheseInline")
   if(!host || !window.BDR?.session) return
@@ -538,11 +574,55 @@ function renderInlineSummary(){
       </p>
     </section>
 
+    <section class="summary-card summary-feedback">
+      <h3>Votre commentaire sur la synthèse</h3>
+      <p class="muted">Déposer votre commentaire sur cette synthèse de votre expérience. Que vous apprend cette expérience d’écoute ?</p>
+      <form id="syntheseCommentForm" class="summary-comment-form">
+        <input id="syntheseCommentInput" type="text" maxlength="280" placeholder="Votre commentaire..." required>
+        <button type="submit">Ajouter</button>
+      </form>
+      <ul class="summary-list summary-comment-list">
+        ${getSyntheseComments().length
+          ? getSyntheseComments().map(c => `<li><b>${formatCommentDate(c.at)}</b><span>${escapeHtml(c.text)}</span></li>`).join("")
+          : "<li class='muted'>Aucun commentaire pour le moment.</li>"
+        }
+      </ul>
+    </section>
+
+    <section class="summary-card replay-card">
+      <h3>Replay accéléré</h3>
+      <p class="muted">Chaque instant horodaté devient une frame du défilé du timing.</p>
+      <canvas id="replayCanvas"></canvas>
+      <input id="replaySlider" type="range" min="0" value="0" step="1" aria-label="Slider replay">
+      <div id="replayInfo">—</div>
+      <button type="button" class="ghost" onclick="openReplayModal()">Ouvrir en plein écran</button>
+    </section>
+
     <section class="summary-actions">
       <button onclick="downloadJson()">Télécharger mes données</button>
     </section>
   `
+
+  const commentForm = document.getElementById('syntheseCommentForm')
+  const commentInput = document.getElementById('syntheseCommentInput')
+  if(commentForm && commentInput){
+    commentForm.onsubmit = e => {
+      e.preventDefault()
+      const text = commentInput.value.trim()
+      if(!text) return
+      addSyntheseComment(text)
+      renderInlineSummary()
+    }
+  }
+
+  const slider = document.getElementById('replaySlider')
+  if(slider){
+    slider.max = Math.max((events.length || 1) - 1, 0)
+    slider.value = slider.max
+  }
+
   renderLivingResonanceMap(nodes, links)
+  initReplay()
 }
 
 

@@ -1466,3 +1466,86 @@ button.done{
     opacity:.25;
   }
 }
+
+.summary-feedback{
+  border-color:#c9d7ff;
+  background:linear-gradient(180deg,#ffffff 0%,#f6f9ff 100%);
+}
+
+.summary-comment-form{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin:12px 0;
+}
+
+.summary-comment-form input{
+  min-height:44px;
+  border:2px solid #000;
+  border-radius:12px;
+  padding:0 12px;
+  font-size:15px;
+}
+
+.summary-comment-list li{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.summary-comment-list b{
+  font-size:12px;
+  opacity:.7;
+}
+
+.replay-card{
+  border-color:#bfd5ff;
+  background:linear-gradient(180deg,#fff,#f3f7ff);
+}
+
+#replayCanvas{
+  height:200px;
+  background:radial-gradient(circle at 50% 30%, #ffffff 0%, #e9f1ff 100%);
+}
+
+#replaySlider,
+#replayModalSlider{
+  accent-color:#2563eb;
+}
+
+#replayInfo,
+#replayModalInfo{
+  min-height:42px;
+  padding:8px 10px;
+  border-radius:10px;
+  background:rgba(255,255,255,.9);
+  border:1px solid #d6def2;
+}
+
+.ghost{
+  background:#fff;
+  color:#111;
+  border:2px solid #111;
+}
+
+@media (min-width: 700px){
+  .summary-comment-form{
+    flex-direction:row;
+  }
+
+  .summary-comment-form input{
+    flex:1;
+  }
+
+  #replayCanvas{
+    height:240px;
+  }
+
+  #replayModalCanvas{
+    height:min(62dvh,560px);
+  }
+
+  .replay-modal-card{
+    width:min(92vw,980px);
+  }
+}

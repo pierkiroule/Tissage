@@ -21,7 +21,7 @@ function createSession(participantCode, sessionCode){
     personalNotes:[],
     personalWords:[],
     noteCount:0,
-    comments:{synthese:""},
+    comments:{synthese:"", syntheseList:[]},
     events:[]
   }
 }
@@ -40,6 +40,8 @@ function loadSession(){
     if(!s.personalNotes) s.personalNotes = []
     if(!s.personalWords) s.personalWords = []
     if(!s.noteCount) s.noteCount = s.personalNotes.length || 0
+    if(!s.comments) s.comments = {synthese:"", syntheseList:[]}
+    if(!Array.isArray(s.comments.syntheseList)) s.comments.syntheseList = []
     return s
   } catch {
     return null
