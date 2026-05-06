@@ -93,6 +93,20 @@ button{
   margin:16px auto;
   text-align:center;
 }
+.home-card{
+  margin:16px auto;
+  max-width:680px;
+  padding:4px 2px;
+}
+.home-list{
+  margin:8px 0 14px;
+  padding-left:20px;
+  line-height:1.4;
+  font-size:16px;
+}
+.home-list li{
+  margin-bottom:6px;
+}
 .scan-card h2,
 .scan-card p,
 #qrStatus{

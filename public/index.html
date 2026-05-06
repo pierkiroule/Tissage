@@ -23,7 +23,27 @@
 
   <section id="app" class="app">
     <div id="tabPager" class="tab-pager">
-      <section class="tab-panel active" data-tab-panel="ecouter">
+      <section class="tab-panel active" data-tab-panel="accueil">
+        <div class="card home-card">
+          <h2>Accueil</h2>
+          <p>Bienvenue 👋 Cette application vous aide à explorer vos ressentis pas à pas.</p>
+          <p><strong>Tuto ultra simple :</strong> vous activez des mots, vous déplacez les nœuds, puis vous créez des liens entre eux par contact.</p>
+          <ul class="home-list">
+            <li><strong>Lier :</strong> faites glisser un nœud jusqu’à toucher un autre nœud. Un lien se crée automatiquement.</li>
+            <li><strong>Délier :</strong> touchez le trait entre deux nœuds pour retirer ce lien.</li>
+            <li><strong>Déselectionner un mot :</strong> touchez à nouveau son bouton, le nœud et ses liens disparaissent.</li>
+          </ul>
+          <p><strong>Les pages du menu :</strong></p>
+          <ul class="home-list">
+            <li>🏠 <strong>Accueil</strong> : mode d’emploi rapide de l’appli.</li>
+            <li>🎧 <strong>Écouter</strong> : parcours QR, étape par étape.</li>
+            <li>🕸️ <strong>Tisser</strong> : espace principal pour poser et relier vos ressentis.</li>
+            <li>📄 <strong>Synthétiser</strong> : résumé vivant de votre tissage.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="tab-panel" data-tab-panel="ecouter">
         <div class="card scan-card">
           <h2>Écouter</h2>
           <p>Parcours sonore : scannez un QR code pour déverrouiller chaque étape.</p>
@@ -62,7 +82,8 @@
     </div>
     <nav class="app-bottom-nav" aria-label="Menu principal">
       <div class="main-tabs" id="mainTabs">
-        <button class="main-tab active" data-tab="ecouter" type="button" aria-label="Écouter" title="Écouter">🎧</button>
+        <button class="main-tab active" data-tab="accueil" type="button" aria-label="Accueil" title="Accueil">🏠</button>
+        <button class="main-tab" data-tab="ecouter" type="button" aria-label="Écouter" title="Écouter">🎧</button>
         <button class="main-tab" data-tab="tisser" type="button" aria-label="Résonner" title="Résonner">🕸️</button>
         <button class="main-tab" data-tab="synthetiser" type="button" aria-label="Synthétiser" title="Synthétiser">📄</button>
       </div>
