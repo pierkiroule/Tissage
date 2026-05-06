@@ -181,6 +181,17 @@ button{
   display:grid;
   gap:8px;
 }
+
+#ancrageModal .tuto-modal-card{
+  max-height:min(88dvh, 760px);
+  display:flex;
+  flex-direction:column;
+}
+
+#ancrageModal .tuto-modal-body{
+  overflow-y:auto;
+  padding-right:4px;
+}
 .home-list{
   margin:8px 0 14px;
   padding-left:20px;
