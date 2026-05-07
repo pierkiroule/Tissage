@@ -10,7 +10,10 @@
   --lien:#f472b6;
   --perso:#222;
   --border:#d8d5ce;
-  --offwhite:#f8f5ef;
+  --offwhite:#f4f6f8;
+  --text:#0f172a;
+  --muted:#5b6472;
+  --shadow-soft:0 10px 30px rgba(15,23,42,.08);
   --card:#fffdf9;
 }
 
@@ -20,7 +23,7 @@ html,body{
   overflow-x:hidden;
   overflow-y:auto;
   background:var(--offwhite);
-  color:#000;
+  color:var(--text);
   font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 }
 
@@ -30,10 +33,17 @@ input,textarea,button{
 
 button{
   background:var(--card);
-  color:#111;
-  border:1.5px solid #111;
-  border-radius:14px;
-  font-weight:900;
+  color:var(--text);
+  border:1px solid #cfd6df;
+  border-radius:12px;
+  font-weight:700;
+  transition:transform .15s ease, box-shadow .2s ease, border-color .2s ease;
+}
+
+button:hover{
+  transform:translateY(-1px);
+  box-shadow:0 8px 20px rgba(15,23,42,.12);
+  border-color:#b8c2cf;
 }
 
 /* ÉCRANS */
@@ -106,7 +116,8 @@ button{
 .app-bottom-nav{
   border-top:1px solid var(--border);
   padding:8px 10px calc(8px + env(safe-area-inset-bottom));
-  background:var(--card);
+  background:color-mix(in oklab,var(--card) 84%, white);
+  backdrop-filter:blur(8px);
 }
 .main-tabs{
   display:flex;
@@ -155,7 +166,7 @@ button{
   background:var(--card);
   border:1px solid var(--border);
   border-radius:24px;
-  box-shadow:0 12px 28px rgba(30,30,30,.08);
+  box-shadow:var(--shadow-soft);
   text-align:center;
 }
 .home-card{
@@ -165,7 +176,7 @@ button{
   background:var(--card);
   border:1px solid var(--border);
   border-radius:24px;
-  box-shadow:0 12px 28px rgba(30,30,30,.08);
+  box-shadow:var(--shadow-soft);
 }
 
 .tuto-link{
@@ -484,21 +495,23 @@ button{
 /* HEADER APP */
 
 header{
-  background:#fff;
-  border-bottom:1px solid var(--border);
+  background:rgba(255,255,255,.92);
+  border-bottom:1px solid #e7ebf1;
   padding:12px;
+  backdrop-filter:blur(8px);
 }
 
 header h1{
   margin:0 0 6px;
-  font-size:22px;
-  font-weight:900;
-  color:#000;
+  font-size:20px;
+  font-weight:800;
+  letter-spacing:-.02em;
+  color:var(--text);
 }
 
 .question{
-  font-size:16px;
-  color:#222;
+  font-size:15px;
+  color:var(--muted);
   margin-bottom:10px;
 }
 
