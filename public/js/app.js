@@ -698,6 +698,7 @@ function renderInlineSummary(){
   const syntheseComments = getSyntheseComments()
   const insights = buildSyntheseInsights(s)
   const relationHighlights = buildRelationHighlights(s)
+  const echo = buildEchoSynthesis(s, insights, relationHighlights)
 
   host.innerHTML = `
     <section class="summary-minimal">
@@ -713,20 +714,18 @@ function renderInlineSummary(){
       </section>
 
       <section class="summary-minimal-card summary-analysis-card">
-        <h3>Analyse rédigée de votre parcours</h3>
-        <p class="summary-analysis-lead">Un regard clair sur ce qui a résonné, ce qui s'est densifié, et ce qui a évolué pendant votre exploration.</p>
+        <h3>Votre Écho de synthèse</h3>
+        <p class="summary-analysis-lead">Une lecture en 3 couches : trace vécue, configuration de sens et résonance narrative.</p>
         <div class="summary-analysis-grid">
           <article><b>${insights.interactions}</b><span>interactions captées</span></article>
           <article><b>${insights.uniqueLabels}</b><span>repères mobilisés</span></article>
           <article><b>${insights.minutes.toFixed(1)} min</b><span>durée active</span></article>
           <article><b>${insights.intensity.toFixed(2)}</b><span>liens / élément</span></article>
         </div>
-        <p><strong>Dynamique dominante :</strong> ${escapeHtml(insights.topTypesLabel)}.</p>
-        <p>${escapeHtml(insights.tempoMsg)}</p>
-        <p>${insights.notes > 0
-          ? `Vos ${insights.notes} note(s) personnelles confirment une posture réflexive: vous n'avez pas seulement relié des éléments, vous les avez interprétés.`
-          : "Aucune note n'a été déposée pour l'instant : ajouter une note permet de mieux expliciter ce qui vous a marqué et pourquoi."}
-        </p>
+        <p><strong>1) Trace vécue :</strong> ${escapeHtml(echo.trace)}</p>
+        <p><strong>2) Configuration de sens :</strong> ${escapeHtml(echo.configuration)}</p>
+        <p><strong>3) Résonance narrative :</strong> ${escapeHtml(echo.narrative)}</p>
+        <p><strong>Phrase d’écho :</strong> <em>${escapeHtml(echo.signature)}</em></p>
       </section>
 
       <section class="summary-minimal-card">
@@ -782,6 +781,41 @@ function renderInlineSummary(){
 
   const categoryTimelineData = buildCategoryTimelineData(s)
   initCategoryTimeline(categoryTimelineData)
+}
+
+function buildEchoSynthesis(session, insights, relationHighlights){
+  const nodes = Array.isArray(session?.active) ? session.active : []
+  const notes = Array.isArray(session?.personalNotes) ? session.personalNotes : []
+  const links = Array.isArray(session?.links) ? session.links : []
+  const events = Array.isArray(session?.events) ? session.events : []
+  const familyCounts = {}
+  const eventTypes = {}
+
+  nodes.forEach(node => {
+    familyCounts[node.family || "autre"] = (familyCounts[node.family || "autre"] || 0) + 1
+  })
+  events.forEach(event => {
+    const key = String(event.type || "interaction")
+    eventTypes[key] = (eventTypes[key] || 0) + 1
+  })
+
+  const topFamily = Object.entries(familyCounts).sort((a,b) => b[1] - a[1])[0]?.[0] || "mixte"
+  const dominantAction = Object.entries(eventTypes).sort((a,b) => b[1] - a[1])[0]?.[0] || "interaction"
+  const strongestRelation = relationHighlights[0]
+  const relationLabel = strongestRelation
+    ? `${strongestRelation.a} ↔ ${strongestRelation.b}`
+    : "pas encore de relation dominante"
+  const tempo = insights.tempoMsg || "Le rythme d’exploration reste progressif."
+  const noteMsg = notes.length
+    ? `${notes.length} note(s) soutiennent un discours personnel explicite.`
+    : "Le discours libre reste à enrichir avec des notes."
+
+  return {
+    trace: `${events.length} interactions sur ${insights.minutes.toFixed(1)} minute(s), avec une dynamique dominante ${insights.topTypesLabel}. ${tempo}`,
+    configuration: `${nodes.length} repères actifs et ${links.length} lien(s), avec une prédominance de la famille "${topFamily}" et une action fréquente "${dominantAction}". Relation saillante : ${relationLabel}.`,
+    narrative: `${noteMsg} Cette configuration suggère un vécu ${links.length > nodes.length ? "fortement relationnel" : "plutôt exploratoire"}, où les associations structurent progressivement le sens.`,
+    signature: `Votre parcours d’écoute fait émerger une résonance ${links.length > 0 ? "mise en réseau" : "en construction"}, centrée sur ${relationLabel}.`
+  }
 }
 
 
