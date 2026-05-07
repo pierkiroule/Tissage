@@ -803,7 +803,8 @@ function buildEchoSynthesis(session, insights, relationHighlights){
   })
 
   const topFamily = Object.entries(familyCounts).sort((a,b) => b[1] - a[1])[0]?.[0] || "mixte"
-  const dominantAction = Object.entries(eventTypes).sort((a,b) => b[1] - a[1])[0]?.[0] || "interaction"
+  const dominantActionKey = Object.entries(eventTypes).sort((a,b) => b[1] - a[1])[0]?.[0] || "interaction"
+  const dominantAction = humanizeEventType(dominantActionKey)
   const strongestRelation = relationHighlights[0]
   const relationLabel = strongestRelation
     ? `${strongestRelation.a} ↔ ${strongestRelation.b}`
