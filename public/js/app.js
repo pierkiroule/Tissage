@@ -560,6 +560,11 @@ function buildCategoryTimelineData(session){
 function buildRelationHighlights(session){
   const events = Array.isArray(session?.events) ? session.events : []
   const links = Array.isArray(session?.links) ? session.links : []
+  const nodes = Array.isArray(session?.active) ? session.active : []
+  const labelById = new Map()
+  nodes.forEach(n => {
+    if(n?.id && n?.label) labelById.set(String(n.id), String(n.label))
+  })
 
   const totalMs = events.length ? Math.max(...events.map(e => Number(e?.elapsedMs || 0)), 0) : 0
   const midMs = totalMs / 2
@@ -567,8 +572,10 @@ function buildRelationHighlights(session){
 
   const addRelation = (a, b, elapsedMs) => {
     if(!a || !b) return
-    const left = String(a)
-    const right = String(b)
+    const leftRaw = String(a)
+    const rightRaw = String(b)
+    const left = labelById.get(leftRaw) || leftRaw
+    const right = labelById.get(rightRaw) || rightRaw
     const key = left < right ? `${left}|||${right}` : `${right}|||${left}`
     if(!relStats[key]) relStats[key] = { a: key.split("|||")[0], b: key.split("|||")[1], total: 0, first: 0, second: 0 }
     relStats[key].total += 1
@@ -593,7 +600,8 @@ function buildRelationHighlights(session){
     .slice(0, 5)
     .map(item => {
       let trend = "stable"
-      if(item.first === 0 && item.second > 0) trend = "nouveau"
+      if(item.total < 2) trend = "observé"
+      else if(item.first === 0 && item.second > 0) trend = "nouveau"
       else if(item.second > item.first) trend = "renforcé"
       else if(item.second < item.first) trend = "en retrait"
       return { ...item, trend }
