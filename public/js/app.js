@@ -1189,7 +1189,7 @@ function renderSummary(){
           ${
             firstEvents.length
               ? `<ul class="summary-list">${firstEvents.map(e => `
-                <li><b>${escapeHtml(e.elapsedLabel || "—")}</b> <span>${escapeHtml(e.type || "événement")}</span></li>
+                <li class="summary-event-item"><strong class="summary-event-title">${escapeHtml(e.type || "événement")}</strong><span class="summary-event-time">${escapeHtml(e.elapsedLabel || "—")}</span></li>
               `).join("")}</ul>`
               : "<p class='muted'>Aucun mouvement enregistré.</p>"
           }
@@ -1200,7 +1200,7 @@ function renderSummary(){
           ${
             lastEvents.length
               ? `<ul class="summary-list">${lastEvents.map(e => `
-                <li><b>${escapeHtml(e.elapsedLabel || "—")}</b> <span>${escapeHtml(e.type || "événement")}</span></li>
+                <li class="summary-event-item"><strong class="summary-event-title">${escapeHtml(e.type || "événement")}</strong><span class="summary-event-time">${escapeHtml(e.elapsedLabel || "—")}</span></li>
               `).join("")}</ul>`
               : "<p class='muted'>Aucun mouvement enregistré.</p>"
           }

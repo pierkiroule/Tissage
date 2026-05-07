@@ -1045,6 +1045,24 @@ button.done{
 .summary-list li{
   line-height:1.35;
 }
+
+.summary-event-item{
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  gap:2px;
+}
+
+.summary-event-title{
+  font-weight:700;
+}
+
+.summary-event-time{
+  opacity:.7;
+  font-size:12px;
+}
 .summary-notes{
   max-height:45dvh;
   overflow:auto;
