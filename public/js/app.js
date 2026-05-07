@@ -34,6 +34,10 @@ function ensureSessionFields(){
   if(!s.personalNotes) s.personalNotes = []
   if(!s.active) s.active = []
   if(!Array.isArray(s.unlockedQrSteps)) s.unlockedQrSteps = []
+  if(typeof s.pausedTotalMs !== "number") s.pausedTotalMs = 0
+  if(typeof s.pauseCount !== "number") s.pauseCount = 0
+  if(typeof s.isPaused !== "boolean") s.isPaused = false
+  if(!Array.isArray(s.pauseHistory)) s.pauseHistory = []
 }
 
 function startSession(){
@@ -126,6 +130,12 @@ function renderMainTabs(){
 
 function switchMainTab(tab){
   activeMainTab = tab
+  if(tab === "synthetiser"){
+    pauseSessionClock("synthese")
+    renderInlineSummary()
+  } else if(window.BDR?.session?.isPaused) {
+    resumeSessionClock(`return_${tab}`)
+  }
   renderMainTabs()
 }
 
@@ -711,6 +721,7 @@ function renderInlineSummary(){
         <article><b>${nodes.length}</b><span>éléments</span></article>
         <article><b>${links.length}</b><span>liens</span></article>
         <article><b>${notes.length}</b><span>notes</span></article>
+        <article><b>${echo.pauseMinutes.toFixed(1)} min</b><span>pause synthèse</span></article>
       </section>
 
       <section class="summary-minimal-card summary-analysis-card">
@@ -806,6 +817,11 @@ function buildEchoSynthesis(session, insights, relationHighlights){
     ? `${strongestRelation.a} ↔ ${strongestRelation.b}`
     : "pas encore de relation dominante"
   const tempo = insights.tempoMsg || "Le rythme d’exploration reste progressif."
+  const totalPausedMs = Number(session?.pausedTotalMs || 0)
+  const currentPauseMs = session?.isPaused && session?.pauseStartedAt
+    ? Math.max(0, Date.now() - Number(session.pauseStartedAt))
+    : 0
+  const pauseMinutes = (totalPausedMs + currentPauseMs) / 60000
   const noteMsg = notes.length
     ? `${notes.length} note(s) soutiennent un discours personnel explicite.`
     : "Le discours libre reste à enrichir avec des notes."
@@ -813,8 +829,9 @@ function buildEchoSynthesis(session, insights, relationHighlights){
   return {
     trace: `${events.length} interactions sur ${insights.minutes.toFixed(1)} minute(s), avec une dynamique dominante ${insights.topTypesLabel}. ${tempo}`,
     configuration: `${nodes.length} repères actifs et ${links.length} lien(s), avec une prédominance de la famille "${topFamily}" et une action fréquente "${dominantAction}". Relation saillante : ${relationLabel}.`,
-    narrative: `${noteMsg} Cette configuration suggère un vécu ${links.length > nodes.length ? "fortement relationnel" : "plutôt exploratoire"}, où les associations structurent progressivement le sens.`,
-    signature: `Votre parcours d’écoute fait émerger une résonance ${links.length > 0 ? "mise en réseau" : "en construction"}, centrée sur ${relationLabel}.`
+    narrative: `${noteMsg} Cette configuration suggère un vécu ${links.length > nodes.length ? "fortement relationnel" : "plutôt exploratoire"}, où les associations structurent progressivement le sens. Vous avez cumulé ${pauseMinutes.toFixed(1)} minute(s) de pause en synthèse (${Number(session?.pauseCount || 0)} passage(s)).`,
+    signature: `Votre parcours d’écoute fait émerger une résonance ${links.length > 0 ? "mise en réseau" : "en construction"}, centrée sur ${relationLabel}.`,
+    pauseMinutes
   }
 }
 
