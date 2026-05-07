@@ -458,6 +458,20 @@ function formatCommentDate(iso){
   }
 }
 
+function humanizeEventType(type){
+  const labels = {
+    session_start: "Démarrage de session",
+    qr_step_progress: "Progression des étapes QR",
+    word_on: "Mot activé",
+    word_off: "Mot retiré",
+    note_add: "Note personnelle ajoutée",
+    back_to_session: "Retour au tissage",
+    link_create: "Lien créé",
+    link_remove: "Lien retiré"
+  }
+  return labels[String(type || "")] || "Interaction"
+}
+
 
 function buildSyntheseInsights(session){
   const events = session.events || []
@@ -490,7 +504,7 @@ function buildSyntheseInsights(session){
   const intensity = nodes.length ? (links.length / nodes.length) : 0
 
   const topTypesLabel = topTypes.length
-    ? topTypes.map(([k,v]) => `${k} (${v})`).join(' · ')
+    ? topTypes.map(([k,v]) => `${humanizeEventType(k)} (${v})`).join(' · ')
     : 'Aucun type dominant observé'
 
   return {
@@ -941,7 +955,7 @@ function drawReplay(index){
   })
 
   const label = event
-    ? `${event.elapsedLabel || formatElapsed(t)} · ${event.type || "événement"} ${event.label ? "· " + event.label : ""}`
+    ? `${event.elapsedLabel || formatElapsed(t)} · ${humanizeEventType(event.type)} ${event.label ? "· " + event.label : ""}`
     : "Aucun événement"
 
   info.textContent = label
@@ -1084,7 +1098,7 @@ function drawReplayModal(index){
   })
 
   info.textContent = event
-    ? `${event.elapsedLabel || ""} · ${event.type || ""} ${event.label ? "· " + event.label : ""}`
+    ? `${event.elapsedLabel || ""} · ${humanizeEventType(event.type)} ${event.label ? "· " + event.label : ""}`
     : "Aucun événement"
 }
 
@@ -1218,7 +1232,7 @@ function renderSummary(){
           ${
             firstEvents.length
               ? `<ul class="summary-list">${firstEvents.map(e => `
-                <li><b>${escapeHtml(e.elapsedLabel || "—")}</b> <span>${escapeHtml(e.type || "événement")}</span></li>
+                <li><b>${escapeHtml(e.elapsedLabel || "—")}</b> <span>${escapeHtml(humanizeEventType(e.type))}</span></li>
               `).join("")}</ul>`
               : "<p class='muted'>Aucun mouvement enregistré.</p>"
           }
@@ -1229,7 +1243,7 @@ function renderSummary(){
           ${
             lastEvents.length
               ? `<ul class="summary-list">${lastEvents.map(e => `
-                <li><b>${escapeHtml(e.elapsedLabel || "—")}</b> <span>${escapeHtml(e.type || "événement")}</span></li>
+                <li><b>${escapeHtml(e.elapsedLabel || "—")}</b> <span>${escapeHtml(humanizeEventType(e.type))}</span></li>
               `).join("")}</ul>`
               : "<p class='muted'>Aucun mouvement enregistré.</p>"
           }
