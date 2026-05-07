@@ -650,14 +650,6 @@ function initCategoryTimeline(data){
   const slider = document.getElementById("categoryTimelineSlider")
   const timeLabel = document.getElementById("categoryTimelineTime")
   let frameIndex = 0
-  let timer = null
-
-  const stop = () => {
-    if(timer){
-      clearInterval(timer)
-      timer = null
-    }
-  }
 
   const updateUI = () => {
     renderCategoryTimelineFrame(data, frameIndex)
@@ -674,26 +666,12 @@ function initCategoryTimeline(data){
     slider.step = "1"
     slider.value = "0"
     slider.oninput = e => {
-      stop()
       frameIndex = Number(e.target.value || 0)
       updateUI()
     }
   }
 
   updateUI()
-
-  timer = setInterval(() => {
-    frameIndex += 1
-    if(frameIndex >= data.frames.length){
-      frameIndex = data.frames.length - 1
-      stop()
-    }
-    updateUI()
-  }, 220)
-
-  window.addEventListener("beforeunload", () => {
-    stop()
-  }, { once:true })
 }
 
 function renderInlineSummary(){
