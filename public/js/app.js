@@ -34,6 +34,10 @@ function ensureSessionFields(){
   if(!s.personalNotes) s.personalNotes = []
   if(!s.active) s.active = []
   if(!Array.isArray(s.unlockedQrSteps)) s.unlockedQrSteps = []
+  if(typeof s.pausedTotalMs !== "number") s.pausedTotalMs = 0
+  if(typeof s.pauseCount !== "number") s.pauseCount = 0
+  if(typeof s.isPaused !== "boolean") s.isPaused = false
+  if(!Array.isArray(s.pauseHistory)) s.pauseHistory = []
 }
 
 function startSession(){
@@ -126,6 +130,12 @@ function renderMainTabs(){
 
 function switchMainTab(tab){
   activeMainTab = tab
+  if(tab === "synthetiser"){
+    pauseSessionClock("synthese")
+    renderInlineSummary()
+  } else if(window.BDR?.session?.isPaused) {
+    resumeSessionClock(`return_${tab}`)
+  }
   renderMainTabs()
 }
 
@@ -448,6 +458,20 @@ function formatCommentDate(iso){
   }
 }
 
+function humanizeEventType(type){
+  const labels = {
+    session_start: "Démarrage de session",
+    qr_step_progress: "Progression des étapes QR",
+    word_on: "Mot activé",
+    word_off: "Mot retiré",
+    note_add: "Note personnelle ajoutée",
+    back_to_session: "Retour au tissage",
+    link_create: "Lien créé",
+    link_remove: "Lien retiré"
+  }
+  return labels[String(type || "")] || "Interaction"
+}
+
 
 function buildSyntheseInsights(session){
   const events = session.events || []
@@ -480,7 +504,7 @@ function buildSyntheseInsights(session){
   const intensity = nodes.length ? (links.length / nodes.length) : 0
 
   const topTypesLabel = topTypes.length
-    ? topTypes.map(([k,v]) => `${k} (${v})`).join(' · ')
+    ? topTypes.map(([k,v]) => `${humanizeEventType(k)} (${v})`).join(' · ')
     : 'Aucun type dominant observé'
 
   return {
@@ -640,14 +664,6 @@ function initCategoryTimeline(data){
   const slider = document.getElementById("categoryTimelineSlider")
   const timeLabel = document.getElementById("categoryTimelineTime")
   let frameIndex = 0
-  let timer = null
-
-  const stop = () => {
-    if(timer){
-      clearInterval(timer)
-      timer = null
-    }
-  }
 
   const updateUI = () => {
     renderCategoryTimelineFrame(data, frameIndex)
@@ -664,26 +680,12 @@ function initCategoryTimeline(data){
     slider.step = "1"
     slider.value = "0"
     slider.oninput = e => {
-      stop()
       frameIndex = Number(e.target.value || 0)
       updateUI()
     }
   }
 
   updateUI()
-
-  timer = setInterval(() => {
-    frameIndex += 1
-    if(frameIndex >= data.frames.length){
-      frameIndex = data.frames.length - 1
-      stop()
-    }
-    updateUI()
-  }, 220)
-
-  window.addEventListener("beforeunload", () => {
-    stop()
-  }, { once:true })
 }
 
 function renderInlineSummary(){
@@ -698,6 +700,7 @@ function renderInlineSummary(){
   const syntheseComments = getSyntheseComments()
   const insights = buildSyntheseInsights(s)
   const relationHighlights = buildRelationHighlights(s)
+  const echo = buildEchoSynthesis(s, insights, relationHighlights)
 
   host.innerHTML = `
     <section class="summary-minimal">
@@ -710,23 +713,22 @@ function renderInlineSummary(){
         <article><b>${nodes.length}</b><span>éléments</span></article>
         <article><b>${links.length}</b><span>liens</span></article>
         <article><b>${notes.length}</b><span>notes</span></article>
+        <article><b>${echo.pauseMinutes.toFixed(1)} min</b><span>pause synthèse</span></article>
       </section>
 
       <section class="summary-minimal-card summary-analysis-card">
-        <h3>Analyse rédigée de votre parcours</h3>
-        <p class="summary-analysis-lead">Un regard clair sur ce qui a résonné, ce qui s'est densifié, et ce qui a évolué pendant votre exploration.</p>
+        <h3>Votre Écho de synthèse</h3>
+        <p class="summary-analysis-lead">Une lecture en 3 couches : trace vécue, configuration de sens et résonance narrative.</p>
         <div class="summary-analysis-grid">
           <article><b>${insights.interactions}</b><span>interactions captées</span></article>
           <article><b>${insights.uniqueLabels}</b><span>repères mobilisés</span></article>
           <article><b>${insights.minutes.toFixed(1)} min</b><span>durée active</span></article>
           <article><b>${insights.intensity.toFixed(2)}</b><span>liens / élément</span></article>
         </div>
-        <p><strong>Dynamique dominante :</strong> ${escapeHtml(insights.topTypesLabel)}.</p>
-        <p>${escapeHtml(insights.tempoMsg)}</p>
-        <p>${insights.notes > 0
-          ? `Vos ${insights.notes} note(s) personnelles confirment une posture réflexive: vous n'avez pas seulement relié des éléments, vous les avez interprétés.`
-          : "Aucune note n'a été déposée pour l'instant : ajouter une note permet de mieux expliciter ce qui vous a marqué et pourquoi."}
-        </p>
+        <p><strong>1) Trace vécue :</strong> ${escapeHtml(echo.trace)}</p>
+        <p><strong>2) Configuration de sens :</strong> ${escapeHtml(echo.configuration)}</p>
+        <p><strong>3) Résonance narrative :</strong> ${escapeHtml(echo.narrative)}</p>
+        <p><strong>Phrase d’écho :</strong> <em>${escapeHtml(echo.signature)}</em></p>
       </section>
 
       <section class="summary-minimal-card">
@@ -782,6 +784,48 @@ function renderInlineSummary(){
 
   const categoryTimelineData = buildCategoryTimelineData(s)
   initCategoryTimeline(categoryTimelineData)
+}
+
+function buildEchoSynthesis(session, insights, relationHighlights){
+  const nodes = Array.isArray(session?.active) ? session.active : []
+  const notes = Array.isArray(session?.personalNotes) ? session.personalNotes : []
+  const links = Array.isArray(session?.links) ? session.links : []
+  const events = Array.isArray(session?.events) ? session.events : []
+  const familyCounts = {}
+  const eventTypes = {}
+
+  nodes.forEach(node => {
+    familyCounts[node.family || "autre"] = (familyCounts[node.family || "autre"] || 0) + 1
+  })
+  events.forEach(event => {
+    const key = String(event.type || "interaction")
+    eventTypes[key] = (eventTypes[key] || 0) + 1
+  })
+
+  const topFamily = Object.entries(familyCounts).sort((a,b) => b[1] - a[1])[0]?.[0] || "mixte"
+  const dominantActionKey = Object.entries(eventTypes).sort((a,b) => b[1] - a[1])[0]?.[0] || "interaction"
+  const dominantAction = humanizeEventType(dominantActionKey)
+  const strongestRelation = relationHighlights[0]
+  const relationLabel = strongestRelation
+    ? `${strongestRelation.a} ↔ ${strongestRelation.b}`
+    : "pas encore de relation dominante"
+  const tempo = insights.tempoMsg || "Le rythme d’exploration reste progressif."
+  const totalPausedMs = Number(session?.pausedTotalMs || 0)
+  const currentPauseMs = session?.isPaused && session?.pauseStartedAt
+    ? Math.max(0, Date.now() - Number(session.pauseStartedAt))
+    : 0
+  const pauseMinutes = (totalPausedMs + currentPauseMs) / 60000
+  const noteMsg = notes.length
+    ? `${notes.length} note(s) soutiennent un discours personnel explicite.`
+    : "Le discours libre reste à enrichir avec des notes."
+
+  return {
+    trace: `${events.length} interactions sur ${insights.minutes.toFixed(1)} minute(s), avec une dynamique dominante ${insights.topTypesLabel}. ${tempo}`,
+    configuration: `${nodes.length} repères actifs et ${links.length} lien(s), avec une prédominance de la famille "${topFamily}" et une action fréquente "${dominantAction}". Relation saillante : ${relationLabel}.`,
+    narrative: `${noteMsg} Cette configuration suggère un vécu ${links.length > nodes.length ? "fortement relationnel" : "plutôt exploratoire"}, où les associations structurent progressivement le sens. Vous avez cumulé ${pauseMinutes.toFixed(1)} minute(s) de pause en synthèse (${Number(session?.pauseCount || 0)} passage(s)).`,
+    signature: `Votre parcours d’écoute fait émerger une résonance ${links.length > 0 ? "mise en réseau" : "en construction"}, centrée sur ${relationLabel}.`,
+    pauseMinutes
+  }
 }
 
 
@@ -912,7 +956,7 @@ function drawReplay(index){
   })
 
   const label = event
-    ? `${event.elapsedLabel || formatElapsed(t)} · ${event.type || "événement"} ${event.label ? "· " + event.label : ""}`
+    ? `${event.elapsedLabel || formatElapsed(t)} · ${humanizeEventType(event.type)} ${event.label ? "· " + event.label : ""}`
     : "Aucun événement"
 
   info.textContent = label
@@ -1055,7 +1099,7 @@ function drawReplayModal(index){
   })
 
   info.textContent = event
-    ? `${event.elapsedLabel || ""} · ${event.type || ""} ${event.label ? "· " + event.label : ""}`
+    ? `${event.elapsedLabel || ""} · ${humanizeEventType(event.type)} ${event.label ? "· " + event.label : ""}`
     : "Aucun événement"
 }
 
@@ -1189,7 +1233,7 @@ function renderSummary(){
           ${
             firstEvents.length
               ? `<ul class="summary-list">${firstEvents.map(e => `
-                <li><b>${escapeHtml(e.elapsedLabel || "—")}</b> <span>${escapeHtml(e.type || "événement")}</span></li>
+                <li><b>${escapeHtml(e.elapsedLabel || "—")}</b> <span>${escapeHtml(humanizeEventType(e.type))}</span></li>
               `).join("")}</ul>`
               : "<p class='muted'>Aucun mouvement enregistré.</p>"
           }
@@ -1200,7 +1244,7 @@ function renderSummary(){
           ${
             lastEvents.length
               ? `<ul class="summary-list">${lastEvents.map(e => `
-                <li><b>${escapeHtml(e.elapsedLabel || "—")}</b> <span>${escapeHtml(e.type || "événement")}</span></li>
+                <li><b>${escapeHtml(e.elapsedLabel || "—")}</b> <span>${escapeHtml(humanizeEventType(e.type))}</span></li>
               `).join("")}</ul>`
               : "<p class='muted'>Aucun mouvement enregistré.</p>"
           }
